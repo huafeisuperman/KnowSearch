@@ -23,22 +23,22 @@
             </Filters>
         </console>
 
-        <ElasticsearchAppender name="esAppender" address="${address}" port="${port}" user="${user}"
+        <!--<ElasticsearchAppender name="esAppender" address="${address}" port="${port}" user="${user}"
                                password="${password}" indexName="${indexName}" typeName="${typeName}" threshold="all"
                                bufferSize="10000" numberOfShards="5" numberOfReplicas="0" logExpire="3"
                                extendsMappingClass="" requestTimeoutMillis="3000" discardWhenBufferIsFull="true">
             <Filters>
-                <!--配置日志表达式，-->
-                <!-- 开启所有日志-->
-                <!--                <RegexFilter regex='.*"logEventType":"(LOG|METRIC|TRACE)".*' onMatch="ACCEPT" onMismatch="DENY"/>-->
-                <!-- 仅开启LOG和METRIC-->
+                &lt;!&ndash;配置日志表达式，&ndash;&gt;
+                &lt;!&ndash; 开启所有日志&ndash;&gt;
+                &lt;!&ndash;                <RegexFilter regex='.*"logEventType":"(LOG|METRIC|TRACE)".*' onMatch="ACCEPT" onMismatch="DENY"/>&ndash;&gt;
+                &lt;!&ndash; 仅开启LOG和METRIC&ndash;&gt;
                 <RegexFilter regex='.*"logEventType":"(LOG|METRIC)".*' onMatch="ACCEPT" onMismatch="DENY"/>
-                <!-- 开启LOG和METRIC，TRACE日志仅当traceId不为空时打印-->
-                <!--            <RegexFilter regex='.*"logEventType":"(LOG|METRIC)".*' onMatch="ACCEPT" onMismatch="NEUTRAL"/>-->
-                <!--            <RegexFilter regex='.*"logEventType":"TRACE".*' onMatch="NEUTRAL" onMismatch="DENY"/>-->
-                <!--            <RegexFilter regex='.*"traceId":"[a-z0-9]+".*' onMatch="NEUTRAL" onMismatch="DENY"/>-->
+                &lt;!&ndash; 开启LOG和METRIC，TRACE日志仅当traceId不为空时打印&ndash;&gt;
+                &lt;!&ndash;            <RegexFilter regex='.*"logEventType":"(LOG|METRIC)".*' onMatch="ACCEPT" onMismatch="NEUTRAL"/>&ndash;&gt;
+                &lt;!&ndash;            <RegexFilter regex='.*"logEventType":"TRACE".*' onMatch="NEUTRAL" onMismatch="DENY"/>&ndash;&gt;
+                &lt;!&ndash;            <RegexFilter regex='.*"traceId":"[a-z0-9]+".*' onMatch="NEUTRAL" onMismatch="DENY"/>&ndash;&gt;
             </Filters>
-        </ElasticsearchAppender>
+        </ElasticsearchAppender>-->
 
         <RollingFile name="file" fileName="${gateway.queryConfig.logPath}/log/gateway.log" filePattern="${gateway.queryConfig.logPath}/log/gateway.log.%d{yyyy-MM-dd}"
                      append="true">
@@ -136,7 +136,7 @@
         <Root level="info">
 <!--            <AppenderRef ref="console" />-->
             <AppenderRef ref="file" />
-            <appender-ref ref="esAppender" />
+            <!--<appender-ref ref="esAppender" />-->
         </Root>
         <AsyncLogger level="info" name="bootLog" additivity="false">
             <AppenderRef ref="bootLog"/>
