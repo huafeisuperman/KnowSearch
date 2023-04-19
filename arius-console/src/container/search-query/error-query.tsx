@@ -6,6 +6,7 @@ import { PERIOD_RADIO_MAP, errorQueryColumns } from "./config";
 import { getErrorQueryList as getQueryList } from "api/search-query";
 import { isSuperApp } from "lib/utils";
 import { ProTable } from "knowdesign";
+import { Drawer } from "antd";
 import "./index.less";
 
 const classPrefix = "error-query-container";
@@ -23,7 +24,8 @@ export const ErrorQuery = (props: any) => {
     size: 10,
   });
   const [total, setTotal] = useState(0);
-
+  const [visible, setVisible] = useState(false);
+  const [drawerData , setDrawerData ] = useState(false);
   const isFirst = useRef(true);
   const totalLimit = 10000;
 
@@ -72,6 +74,15 @@ export const ErrorQuery = (props: any) => {
     getAsyncDataSource();
   }, [queryParams, page]);
 
+  const showDrawer = (record: any) => {
+    setDrawerData(record)
+    setVisible(true);
+  };
+
+  const onClose = () => {
+    setVisible(false);
+  };
+
   useEffect(() => {
     props?.menu === "error-query" && getAsyncDataSource();
   }, [props?.menu]);
@@ -92,7 +103,7 @@ export const ErrorQuery = (props: any) => {
             loading: isLoading,
             rowKey: "key",
             dataSource: dataSource,
-            columns: errorQueryColumns(isSuperApp()),
+            columns: errorQueryColumns(isSuperApp() ,showDrawer ),
             paginationProps: {
               total: total > totalLimit ? totalLimit : total,
               current: page.page,
@@ -119,6 +130,16 @@ export const ErrorQuery = (props: any) => {
           }}
         />
       </div>
+      <Drawer
+        title={"错误信息详情"}
+        width={578}
+        visible={visible}
+        maskClosable={true}
+        onClose={onClose}
+        bodyStyle={{ padding: "24pxs" }}
+      >
+        <p>{drawerData}</p>
+      </Drawer>
     </div>
   );
 };
