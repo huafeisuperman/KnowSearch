@@ -875,12 +875,15 @@ public class ClusterPhyManagerImpl implements ClusterPhyManager {
     @Override
     public Result<Boolean> editCluster(ClusterPhyDTO param, String operator) {
 
-        //用“http 写地址”去做密码验证
-        String esClientHttpAddressesStr = param.getHttpWriteAddress();
-        // 密码验证
-        Result<Void> passwdResult = checkClusterWithoutPasswd(param.getPassword(), esClientHttpAddressesStr);
-        if (passwdResult.failed()) {
-            return Result.buildFail(passwdResult.getMessage());
+        //密码非空才去做校验
+        if (StringUtils.isNotEmpty(param.getPassword())) {
+            //用“http 写地址”去做密码验证
+            String esClientHttpAddressesStr = param.getHttpWriteAddress();
+            // 密码验证
+            Result<Void> passwdResult = checkClusterWithoutPasswd(param.getPassword(), esClientHttpAddressesStr);
+            if (passwdResult.failed()) {
+                return Result.build(passwdResult.getCode(), passwdResult.getMessage());
+            }
         }
 
         final ClusterPhy oldClusterPhy = clusterPhyService.getClusterById(param.getId());
