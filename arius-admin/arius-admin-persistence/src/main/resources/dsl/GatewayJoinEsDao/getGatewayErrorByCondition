@@ -31,7 +31,8 @@
     "indices",
     "uri",
     "requestId",
-    "clusterName"
+    "clusterName",
+    "dslTemplateMd5"
   ],
   "sort": [
       {
