@@ -874,6 +874,15 @@ public class ClusterPhyManagerImpl implements ClusterPhyManager {
 
     @Override
     public Result<Boolean> editCluster(ClusterPhyDTO param, String operator) {
+
+        //用“http 写地址”去做密码验证
+        String esClientHttpAddressesStr = param.getHttpWriteAddress();
+        // 密码验证
+        Result<Void> passwdResult = checkClusterWithoutPasswd(param.getPassword(), esClientHttpAddressesStr);
+        if (passwdResult.failed()) {
+            return Result.buildFail(passwdResult.getMessage());
+        }
+
         final ClusterPhy oldClusterPhy = clusterPhyService.getClusterById(param.getId());
         final Result<Boolean> result = clusterPhyService.editCluster(param, operator);
         if (result.success()) {
@@ -1936,7 +1945,7 @@ public class ClusterPhyManagerImpl implements ClusterPhyManager {
         String esClientHttpAddressesStr = clusterRoleHostService.buildESClientHttpAddressesStr(roleClusterHosts);
 
         // 密码验证
-        Result<Void> passwdResult = checkClusterWithoutPasswd(param, esClientHttpAddressesStr);
+        Result<Void> passwdResult = checkClusterWithoutPasswd(param.getPassword(), esClientHttpAddressesStr);
         if (passwdResult.failed()) {
             return passwdResult;
         }
@@ -2002,17 +2011,17 @@ public class ClusterPhyManagerImpl implements ClusterPhyManager {
     /**
      * 检测「未设置密码的集群」接入时是否携带账户信息
      */
-    private Result<Void> checkClusterWithoutPasswd(ClusterJoinDTO param, String esClientHttpAddressesStr) {
+    private Result<Void> checkClusterWithoutPasswd(String password, String esClientHttpAddressesStr) {
         ClusterConnectionStatus status = esClusterService.checkClusterPassword(esClientHttpAddressesStr, null);
         if (ClusterConnectionStatus.DISCONNECTED == status) {
             return Result.buildParamIllegal("集群离线未能连通");
         }
 
-        if (!Strings.isNullOrEmpty(param.getPassword())) {
+        if (!Strings.isNullOrEmpty(password)) {
             if (ClusterConnectionStatus.NORMAL == status) {
                 return Result.buildParamIllegal("未设置密码的集群，请勿输入账户信息");
             }
-            status = esClusterService.checkClusterPassword(esClientHttpAddressesStr, param.getPassword());
+            status = esClusterService.checkClusterPassword(esClientHttpAddressesStr, password);
             if (ClusterConnectionStatus.UNAUTHORIZED == status) {
                 return Result.buildParamIllegal("集群的账户信息错误");
             }
