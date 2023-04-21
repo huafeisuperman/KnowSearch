@@ -486,7 +486,12 @@ export const slowQueryColumns = (superApp: boolean) => {
       title: "模板MD5",
       dataIndex: "dslTemplateMd5",
       invisible: !superApp,
-      render: (text) => errorQueryColumnsRender(text),
+      width: 150,
+      render: (text) => (
+        <Tooltip placement="right" title={renderText(text)}>
+          <div className="two-row-ellipsis">{text}</div>
+        </Tooltip>
+      ),
     },
     {
       title: "所属应用",
