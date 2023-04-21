@@ -445,14 +445,14 @@ export const errorQueryColumns = (superApp: boolean, clickfn: Function) => {
     {
       title: "错误信息",
       dataIndex: "exceptionName",
-      render: (item) => {
+      render: (text, record) => {
         return (
           <div
             className="error-query-container-table-cell two-row-ellipsis pointer"
-            onClick={() => clickfn(item)}
+            onClick={() => clickfn(record.stack)}
           >
-            <Tooltip placement="right" title={renderText(item)}>
-              {item}
+            <Tooltip placement="right" title={renderText(text)}>
+              {text}
             </Tooltip>
           </div>
         );
