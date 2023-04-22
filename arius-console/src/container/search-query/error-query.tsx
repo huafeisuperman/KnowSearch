@@ -145,7 +145,7 @@ export const ErrorQuery = (props: any) => {
       </div>
       <Drawer
         title={"错误信息详情"}
-        width={578}
+        width={600}
         visible={visible}
         maskClosable={true}
         onClose={onClose}
