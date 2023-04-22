@@ -48,7 +48,17 @@ public class OpS3FileStorageHandle implements FileStorageHandle {
     @PostConstruct
     public void init() {
         try {
-            minioClient = MinioClient.builder().endpoint(endpoint).credentials(accessKey, secretKey).build();
+            //判断是否有端口
+            if (endpoint.contains(":")) {
+                String[] arr = endpoint.split(":");
+                if (arr.length == 2) {
+                    endpoint = arr[0];
+                    int port = Integer.parseInt(arr[1]);
+                    minioClient = MinioClient.builder().endpoint(endpoint, port, false).credentials(accessKey, secretKey).build();
+                }
+            } else {
+                minioClient = MinioClient.builder().endpoint(endpoint).credentials(accessKey, secretKey).build();
+            }
         } catch (Exception e) {
             LOGGER.error("class=S3FileStorageHandle||method=init||fields={}||errMsg={}", this,
                     e.getMessage());
@@ -122,7 +132,8 @@ public class OpS3FileStorageHandle implements FileStorageHandle {
             }
             return true;
         } catch (Exception e) {
-            LOGGER.error(
+            LOGGER.error("createBucketIfNotExist error:", e);
+            LOGGER.warn(
                     "class=S3FileStorageHandle||method=createBucketIfNotExist||bucket={}||errMsg={}||msg=create bucket failed",
                     this.bucket, e.getMessage());
         }
