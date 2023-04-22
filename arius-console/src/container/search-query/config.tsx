@@ -489,7 +489,14 @@ export const slowQueryColumns = (superApp: boolean) => {
       width: 150,
       render: (text) => (
         <Tooltip placement="right" title={renderText(text)}>
-          <div className="two-row-ellipsis">{text}</div>
+          <div
+            className="two-row-ellipsis"
+            onClick={() => {
+              copyString(text);
+            }}
+          >
+            <a href="javascript:;">{text}</a>
+          </div>
         </Tooltip>
       ),
     },
