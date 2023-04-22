@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import * as actions from "actions";
-import { getPhysicsColumns, getPhyClusterQueryXForm, getBatchBtn } from "./config";
+import {
+  getPhysicsColumns,
+  getPhyClusterQueryXForm,
+  getBatchBtn,
+} from "./config";
 import {
   getOpPhysicsClusterList,
   getNodeSpecification,
@@ -24,8 +28,10 @@ import { ProTable } from "knowdesign";
 import "./index.less";
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  setModalId: (modalId: string, params?: any, cb?: Function) => dispatch(actions.setModalId(modalId, params, cb)),
-  setDrawerId: (modalId: string, params?: any, cb?: Function) => dispatch(actions.setDrawerId(modalId, params, cb)),
+  setModalId: (modalId: string, params?: any, cb?: Function) =>
+    dispatch(actions.setModalId(modalId, params, cb)),
+  setDrawerId: (modalId: string, params?: any, cb?: Function) =>
+    dispatch(actions.setDrawerId(modalId, params, cb)),
 });
 
 const PhysicsClusterBox = (props) => {
@@ -96,7 +102,7 @@ const PhysicsClusterBox = (props) => {
         setLoading(false);
       });
     getZeusUrl().then((res) => {
-      setUrl(res);
+      setUrl("http://" + res);
     });
   };
 
@@ -169,7 +175,11 @@ const PhysicsClusterBox = (props) => {
             label: item,
           };
         });
-        props.setModalId("applyPhyCluster", { loading: false, nodeList, machineList, history: props.history }, reloadData);
+        props.setModalId(
+          "applyPhyCluster",
+          { loading: false, nodeList, machineList, history: props.history },
+          reloadData
+        );
       })
       .catch((err) => {
         XNotification({ type: "error", message: "网络错误！" });
@@ -179,7 +189,10 @@ const PhysicsClusterBox = (props) => {
 
   const getOpBtns = (): ITableBtn[] => {
     return [
-      hasOpPermission(PhyClusterPermissions.PAGE, PhyClusterPermissions.ACCESS) && {
+      hasOpPermission(
+        PhyClusterPermissions.PAGE,
+        PhyClusterPermissions.ACCESS
+      ) && {
         label: "接入集群",
         type: "default",
         clickFunc: () => props.setModalId("accessCluster", {}, reloadData),
@@ -190,10 +203,18 @@ const PhysicsClusterBox = (props) => {
         isOpenUp: isOpenUp,
         clickFunc: () => getModalData(),
       },
-      hasOpPermission(PhyClusterPermissions.PAGE, PhyClusterPermissions.FAST_INDEX) && {
+      hasOpPermission(
+        PhyClusterPermissions.PAGE,
+        PhyClusterPermissions.FAST_INDEX
+      ) && {
         className: "ant-btn-primary",
         label: "数据迁移",
-        clickFunc: () => props.setDrawerId("fastIndex", { history: props.history }, reloadData),
+        clickFunc: () =>
+          props.setDrawerId(
+            "fastIndex",
+            { history: props.history },
+            reloadData
+          ),
       },
     ].filter(Boolean);
   };
@@ -202,9 +223,17 @@ const PhysicsClusterBox = (props) => {
     const menu = (
       <Menu>
         {getBatchBtn(props.setModalId, reloadData, selectedRows).map((item) => (
-          <Menu.Item disabled={(selectedRows && selectedRows.length === 0) || isOpenUp} key={item.label} onClick={() => item.onClick()}>
+          <Menu.Item
+            disabled={(selectedRows && selectedRows.length === 0) || isOpenUp}
+            key={item.label}
+            onClick={() => item.onClick()}
+          >
             {selectedRows && selectedRows.length === 0 ? (
-              <Tooltip title={isOpenUp ? "该功能仅面向商业版客户开放" : "需选定集群"}>{item.label}</Tooltip>
+              <Tooltip
+                title={isOpenUp ? "该功能仅面向商业版客户开放" : "需选定集群"}
+              >
+                {item.label}
+              </Tooltip>
             ) : (
               item.label
             )}
@@ -271,7 +300,13 @@ const PhysicsClusterBox = (props) => {
           // colMode: "style", //col默认设计样式
           totalNumber: total, //传入总条数
           defaultCollapse: true,
-          columns: getPhyClusterQueryXForm(data, packageHostList, phyClusterList, logiClusterList, onPhyClusterChange),
+          columns: getPhyClusterQueryXForm(
+            data,
+            packageHostList,
+            phyClusterList,
+            logiClusterList,
+            onPhyClusterChange
+          ),
           // onChange={() => null}
           onReset: handleReset,
           onSearch: handleSubmit,
@@ -291,7 +326,12 @@ const PhysicsClusterBox = (props) => {
           loading,
           rowKey: "id",
           dataSource: data,
-          columns: getPhysicsColumns(props.setModalId, props.setDrawerId, reloadData, props),
+          columns: getPhysicsColumns(
+            props.setModalId,
+            props.setDrawerId,
+            reloadData,
+            props
+          ),
           reloadData,
           getOpBtns: getOpBtns,
           getJsxElement: getBatchBtns,
@@ -299,7 +339,12 @@ const PhysicsClusterBox = (props) => {
             <div className="zeus-url">
               <RenderTitle {...renderTitleContent()} />{" "}
               {url && (
-                <Tag className="zeus-url-tag" onClick={() => (window.open("about:blank").location.href = url)}>
+                <Tag
+                  className="zeus-url-tag"
+                  onClick={() =>
+                    (window.open("about:blank").location.href = url)
+                  }
+                >
                   Zeus管控
                 </Tag>
               )}
@@ -331,4 +376,7 @@ const PhysicsClusterBox = (props) => {
     </div>
   );
 };
-export const PhysicsCluster = connect(null, mapDispatchToProps)(PhysicsClusterBox);
+export const PhysicsCluster = connect(
+  null,
+  mapDispatchToProps
+)(PhysicsClusterBox);
