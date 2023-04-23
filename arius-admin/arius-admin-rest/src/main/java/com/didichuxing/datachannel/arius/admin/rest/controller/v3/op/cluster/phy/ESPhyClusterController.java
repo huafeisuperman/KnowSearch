@@ -212,7 +212,8 @@ public class ESPhyClusterController {
     @ApiOperation(value = "物理集群绑定 gateway",tags = "")
     public Result<Void> bindGatewayCluster(@RequestBody BindGatewayClusterDTO bindGatewayClusterDTO,
                                            HttpServletRequest request) {
-        return clusterPhyManager.bindGatewayCluster(bindGatewayClusterDTO.getClusterPhyId(),bindGatewayClusterDTO.getGatewayClusterIds(), HttpRequestUtil.getOperator(request),
+        return clusterPhyManager.bindGatewayCluster(bindGatewayClusterDTO.getClusterPhyId(),bindGatewayClusterDTO.getGatewayClusterIds(),
+                HttpRequestUtil.getOperator(request),
                 HttpRequestUtil.getProjectId(request));
     }
 
@@ -230,6 +231,13 @@ public class ESPhyClusterController {
     @ApiOperation(value = "获取集群资源类型",tags = "")
     public Result<List<TupleTwo<Integer, ClusterResourceTypeEnum>>> getClusterResourceType(HttpServletRequest request) {
         return Result.buildSucc(ClusterResourceTypeEnum.getAll());
+    }
+
+    @GetMapping("versions")
+    @ResponseBody
+    @ApiOperation(value = "获取物理集群版本列表",tags = "")
+    public Result<List<String>> getClusterVersions(HttpServletRequest request) {
+        return clusterPhyManager.getClusterVersions();
     }
 
 }
