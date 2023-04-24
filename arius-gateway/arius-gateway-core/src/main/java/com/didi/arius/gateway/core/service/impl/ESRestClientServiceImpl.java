@@ -4,6 +4,7 @@ import static org.apache.commons.lang.StringUtils.*;
 
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.message.BasicHeader;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,11 +133,19 @@ public class ESRestClientServiceImpl implements ESRestClientService {
 
     private boolean alreadyInitialCenter(List<String> noNeedClose, String newClusterName, ESCluster newDataCenter) {
         ESCluster oldDataCenter = this.esClusterMap.get(newClusterName);
-        ESClient esClient = oldDataCenter.getEsClient();
-        ESClient esWriteClient = oldDataCenter.getEsWriteClient();
+
+        //密码(包含账户名)变化的也要重新init连接
+        if (StringUtils.isNotEmpty(newDataCenter.getPassword()) && !newDataCenter.getPassword().equals(oldDataCenter.getPassword())) {
+            return false;
+        }
+
         if (isEqualAddress(oldDataCenter.getHttpAddress(), newDataCenter.getHttpAddress()) &&
                 isEqualAddress(oldDataCenter.getHttpWriteAddress(), newDataCenter.getHttpWriteAddress()) &&
                 oldDataCenter.getRunMode() == newDataCenter.getRunMode()) {
+
+            ESClient esClient = oldDataCenter.getEsClient();
+            ESClient esWriteClient = oldDataCenter.getEsWriteClient();
+
             esClient.setEsVersion(newDataCenter.getEsVersion());
             if (null != esWriteClient) {
                 esWriteClient.setEsVersion(newDataCenter.getEsVersion());
