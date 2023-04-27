@@ -99,6 +99,10 @@ public class GatewayJoinPO extends BaseESPO {
      */
     private String            exceptionName;
     /**
+     * 异常堆栈信息
+     */
+    private String            stack;
+    /**
      * 创建时间
      */
     private String            ariusCreateTime;

@@ -38,6 +38,7 @@
     "totalHits",
     "totalShards",
     "responseLen",
-    "isTimedOut"
+    "isTimedOut",
+    "dslTemplateMd5"
   ]
 }

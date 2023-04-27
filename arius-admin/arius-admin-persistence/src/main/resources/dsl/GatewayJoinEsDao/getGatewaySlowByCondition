@@ -26,7 +26,8 @@
     "totalShards",
     "responseLen",
     "isTimedOut",
-    "clusterName"
+    "clusterName",
+    "dslTemplateMd5"
   ],
   "sort": [
       {

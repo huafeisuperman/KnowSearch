@@ -2,6 +2,7 @@ package com.didichuxing.datachannel.arius.admin.core.service.gateway;
 
 import com.didichuxing.datachannel.arius.admin.common.bean.entity.project.ESUser;
 import java.util.List;
+import java.util.Set;
 
 import com.didichuxing.datachannel.arius.admin.common.bean.common.GatewayHeartbeat;
 import com.didichuxing.datachannel.arius.admin.common.bean.entity.gateway.GatewayClusterNode;
@@ -30,7 +31,7 @@ public interface GatewayService {
     /**
      * 重新加载集群
      */
-    void reloadClusterName();
+    Set<String> reloadClusterName();
 
     /**
      * 获取集群存活的节点列表

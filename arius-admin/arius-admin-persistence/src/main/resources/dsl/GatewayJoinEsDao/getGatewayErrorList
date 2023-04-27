@@ -26,7 +26,8 @@
     "indiceSample",
     "dsl",
     "exceptionName",
-    "timeStamp"
+    "timeStamp",
+    "dslTemplateMd5"
   ],
   "sort": [
     {
