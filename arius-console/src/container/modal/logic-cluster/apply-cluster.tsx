@@ -3,7 +3,10 @@ import { XFormWrapper } from "component/x-form-wrapper";
 import { connect } from "react-redux";
 import * as actions from "actions";
 import { FormItemType, IFormItem } from "component/x-form";
-import { getPackageTypeDescVersion } from "api/cluster-api";
+import {
+  getPackageTypeDescVersion,
+  getPackageTypeVersion,
+} from "api/cluster-api";
 import { DataNode, RenderText } from "container/custom-form";
 import { AppState, UserState } from "store/type";
 import { IWorkOrder } from "typesPath/params-types";
@@ -20,7 +23,13 @@ const mapStateToProps = (state: any) => ({
   user: state.user,
 });
 
-const ApplyClusterModal = (props: { dispatch: any; cb: Function; app: AppState; user: UserState; params: any }) => {
+const ApplyClusterModal = (props: {
+  dispatch: any;
+  cb: Function;
+  app: AppState;
+  user: UserState;
+  params: any;
+}) => {
   const [versionList, setVersionList] = useState([]);
 
   useEffect(() => {
@@ -28,8 +37,18 @@ const ApplyClusterModal = (props: { dispatch: any; cb: Function; app: AppState; 
   }, []);
 
   const getVersionList = async () => {
-    let res = await getPackageTypeDescVersion("es-install-package");
-    let list = (res || []).map((item) => ({ title: item.version, value: item.version, id: item.id }));
+    // let res = await getPackageTypeDescVersion("es-install-package");
+    // let list = (res || []).map((item) => ({
+    //   title: item.version,
+    //   value: item.version,
+    //   id: item.id,
+    // }));
+    let res = await getPackageTypeVersion();
+    let list = (res || []).map((item) => ({
+      value: item, title: item
+    }));
+    console.log(res, list);
+
     setVersionList(list);
   };
 
@@ -39,7 +58,8 @@ const ApplyClusterModal = (props: { dispatch: any; cb: Function; app: AppState; 
         key: "name",
         label: "集群名称",
         attrs: {
-          placeholder: "请填写集群名称，支持大、小写字母、数字、-、_，1-32位字符",
+          placeholder:
+            "请填写集群名称，支持大、小写字母、数字、-、_，1-32位字符",
         },
         rules: [
           {
@@ -48,7 +68,9 @@ const ApplyClusterModal = (props: { dispatch: any; cb: Function; app: AppState; 
             validator: async (rule: any, value: string) => {
               const reg = /^[a-zA-Z0-9_-]{1,}$/g;
               if (!reg.test(value) || value?.length > 32 || !value) {
-                return Promise.reject("请填写集群名称，支持大、小写字母、数字、-、_，1-32位字符");
+                return Promise.reject(
+                  "请填写集群名称，支持大、小写字母、数字、-、_，1-32位字符"
+                );
               }
               return Promise.resolve();
             },
@@ -125,7 +147,10 @@ const ApplyClusterModal = (props: { dispatch: any; cb: Function; app: AppState; 
           {
             required: true,
             whitespace: true,
-            validator: async (rule: any, value: { dataNodeNu: number; dataNodeSpec: string }) => {
+            validator: async (
+              rule: any,
+              value: { dataNodeNu: number; dataNodeSpec: string }
+            ) => {
               if (!value) {
                 return Promise.reject("请输入节点规格");
               }
@@ -196,6 +221,7 @@ const ApplyClusterModal = (props: { dispatch: any; cb: Function; app: AppState; 
           memo: result.memo,
           type: result.type,
           level: result.level,
+          esVersion: result.esVersion,
         },
         submitorProjectId: props.app.appInfo()?.id,
         submitor: props.user.getName("userName"),

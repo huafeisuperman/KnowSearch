@@ -633,6 +633,10 @@ export const getNodeMachineSpecs = () => {
 export const getPackageTypeDescVersion = (packageTypeDesc: string) => {
   return fetch(`/v3/op/software/package/${packageTypeDesc}/versions`);
 };
+// 获取集群版本-2023.4.23
+export const getPackageTypeVersion = () => {
+  return fetch(`/v3/cluster/phy/versions`);
+};
 
 // 根据 clusterPhyId 获取物理集群配置信息
 export const getPhyConfigFile = (clusterPhyId: number) => {

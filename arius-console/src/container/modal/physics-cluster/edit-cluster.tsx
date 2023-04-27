@@ -1,4 +1,5 @@
 import * as React from "react";
+import{ useState} from "react";
 import { XFormWrapper } from "component/x-form-wrapper";
 import { connect } from "react-redux";
 import * as actions from "actions";
@@ -57,6 +58,7 @@ const EditPhyCluster = (props: { dispatch: any; cb: Function; params: IOpPhysics
       return IP_TIP;
     }
   };
+  const [inptType, setInptType] = useState(FormItemType.inputPassword);
 
   const formMap = () => {
     let { password, proxyAddress } = props.params;
@@ -90,6 +92,7 @@ const EditPhyCluster = (props: { dispatch: any; cb: Function; params: IOpPhysics
         key: "password",
         label: "密码",
         invisible: !password,
+        type: inptType,
         attrs: {
           placeholder: "请输入密码",
         },
@@ -97,6 +100,7 @@ const EditPhyCluster = (props: { dispatch: any; cb: Function; params: IOpPhysics
           {
             required: true,
             validator: async (rule: any, value: string) => {
+              if(value.length === 0) setInptType(FormItemType.input)
               if (value.length < 6 || value.length > 32 || /[\u4e00-\u9fa5\:：.]/.test(value)) {
                 return Promise.reject("请填写正确密码，6-32位字符，不支持.、:、中文");
               }
@@ -237,6 +241,7 @@ const EditPhyCluster = (props: { dispatch: any; cb: Function; params: IOpPhysics
     width: 660,
     needSuccessMessage: false,
     onCancel: () => {
+      props.cb && props.cb();
       props.dispatch(actions.setModalId(""));
     },
     onSubmit: (result: any) => {

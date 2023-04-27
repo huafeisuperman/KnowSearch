@@ -52,7 +52,8 @@ module.exports = merge(getWebpackCommonConfig(), {
     proxy: {
       "/api/es/admin": {
         // target: "https://api-kylin-xg02.intra.xiaojukeji.com/bigdata_commercial_es_admin_master",
-        target: "http://10.96.75.19:18788",
+        // target: "http://10.96.75.19:18788",
+        target: "http://172.18.81.151:8015",
         // target: "http://10.96.75.19:19475",
         changeOrigin: true,
         pathRewrite: {
@@ -60,7 +61,7 @@ module.exports = merge(getWebpackCommonConfig(), {
         },
       },
       "/api/es/gateway": {
-        target: "http://10.96.75.13:18278",
+        target: "http://172.18.81.151:8200",
         // target: "http://127.0.0.1:9200",
         changeOrigin: true,
         // headers: {

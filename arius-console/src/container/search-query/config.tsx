@@ -4,11 +4,20 @@ import { IMenuItem } from "typesPath/base-types";
 import { renderOperationBtns } from "container/custom-component";
 import moment from "moment";
 import { changeStatus } from "api/search-query";
-import { SearchQueryPermissions, SearchTemplatePermissions } from "constants/permission";
+import {
+  SearchQueryPermissions,
+  SearchTemplatePermissions,
+} from "constants/permission";
 import { hasOpPermission } from "lib/permission";
 import { ErrorQuery } from "./error-query";
 import { SlowQuery } from "./slow-query";
-import { copyString, transTimeFormat, formatDecimalPoint, getFormatJsonStr, isSuperApp } from "lib/utils";
+import {
+  copyString,
+  transTimeFormat,
+  formatDecimalPoint,
+  getFormatJsonStr,
+  isSuperApp,
+} from "lib/utils";
 import store from "store";
 import { copyContentFn } from "knowdesign/lib/utils/tools";
 import DRangeTime from "../../d1-packages/d-range-time";
@@ -34,7 +43,10 @@ export const getTabList = (setReload?: any) => {
     {
       name: "慢查询列表",
       key: TAB_LIST_KEY.slowQuery,
-      visible: hasOpPermission(SearchQueryPermissions.PAGE, SearchQueryPermissions.SLOW_LIST),
+      visible: hasOpPermission(
+        SearchQueryPermissions.PAGE,
+        SearchQueryPermissions.SLOW_LIST
+      ),
       content: (menu) => <SlowQuery menu={menu} />,
       renderCustomElement: (menu) => {
         return (
@@ -48,7 +60,10 @@ export const getTabList = (setReload?: any) => {
     {
       name: "异常查询列表",
       key: TAB_LIST_KEY.errorQuery,
-      visible: hasOpPermission(SearchQueryPermissions.PAGE, SearchQueryPermissions.ERROR_LIST),
+      visible: hasOpPermission(
+        SearchQueryPermissions.PAGE,
+        SearchQueryPermissions.ERROR_LIST
+      ),
       content: (menu) => <ErrorQuery menu={menu} />,
       renderCustomElement: (menu) => {
         return (
@@ -117,21 +132,33 @@ export const getQueryTplColumns = (
   setVisible,
   props
 ) => {
-  const getCongigBtnList = (reloadData: Function, record: any, showEditLimit: Function) => {
+  const getCongigBtnList = (
+    reloadData: Function,
+    record: any,
+    showEditLimit: Function
+  ) => {
     return [
       {
         label: `${record.enable || record.enable === null ? "禁用" : "启用"}`,
-        invisible: !hasOpPermission(SearchTemplatePermissions.PAGE, SearchTemplatePermissions.DISABLE),
+        invisible: !hasOpPermission(
+          SearchTemplatePermissions.PAGE,
+          SearchTemplatePermissions.DISABLE
+        ),
         clickFunc: () => {
           confirm({
             title: "提示",
-            content: `确定${record.enable || record.enable === null ? "禁用" : "启用"}查询模板${record.dslTemplateMd5}？`,
+            content: `确定${
+              record.enable || record.enable === null ? "禁用" : "启用"
+            }查询模板${record.dslTemplateMd5}？`,
             width: 500,
             okText: "确认",
             cancelText: "取消",
             onOk: async () => {
               if (superApp) {
-                return changeStatus(record.dslTemplateMd5, record.projectId).then((res) => {
+                return changeStatus(
+                  record.dslTemplateMd5,
+                  record.projectId
+                ).then((res) => {
                   reloadData();
                   message.success("操作成功");
                 });
@@ -148,14 +175,22 @@ export const getQueryTplColumns = (
                 description: "",
                 type: "dslTemplateStatusChange",
               };
-              await submitWorkOrder(params, props?.history, () => reloadData(), 500);
+              await submitWorkOrder(
+                params,
+                props?.history,
+                () => reloadData(),
+                500
+              );
             },
           });
         },
       },
       {
         label: "修改限流值",
-        invisible: !hasOpPermission(SearchTemplatePermissions.PAGE, SearchTemplatePermissions.MODIFY_LIMIT),
+        invisible: !hasOpPermission(
+          SearchTemplatePermissions.PAGE,
+          SearchTemplatePermissions.MODIFY_LIMIT
+        ),
         clickFunc: () => {
           showEditLimit(record);
         },
@@ -185,7 +220,10 @@ export const getQueryTplColumns = (
               </Tooltip>
             ),
             clickFunc: () => {
-              showDrawer({ ...record, projectName: formatProject(record.projectId) });
+              showDrawer({
+                ...record,
+                projectName: formatProject(record.projectId),
+              });
             },
           },
         ];
@@ -353,12 +391,14 @@ export const PERIOD_RADIO_MAP = periodRadioMap;
 const errorQueryColumnsRender = (item) => {
   return (
     <Tooltip placement="right" title={renderText(item)}>
-      <div className="error-query-container-table-cell two-row-ellipsis"> {item || "-"}</div>
+      <div className="error-query-container-table-cell two-row-ellipsis">
+        {item || "-"}
+      </div>
     </Tooltip>
   );
 };
 
-export const errorQueryColumns = (superApp: boolean) => {
+export const errorQueryColumns = (superApp: boolean, clickfn: Function) => {
   const columns = [
     {
       title: "请求URL",
@@ -405,7 +445,18 @@ export const errorQueryColumns = (superApp: boolean) => {
     {
       title: "错误信息",
       dataIndex: "exceptionName",
-      render: (item) => errorQueryColumnsRender(item),
+      render: (text, record) => {
+        return (
+          <div
+            className="error-query-container-table-cell two-row-ellipsis pointer"
+            onClick={() => clickfn(record.stack)}
+          >
+            <Tooltip placement="right" title={renderText(text)}>
+              {text}
+            </Tooltip>
+          </div>
+        );
+      },
     },
   ];
   return columns.filter((item) => !item.invisible);
@@ -430,6 +481,25 @@ export const slowQueryColumns = (superApp: boolean) => {
       ),
       fixed: "left",
     },
+
+    {
+      title: "模板MD5",
+      dataIndex: "dslTemplateMd5",
+      invisible: !superApp,
+      width: 150,
+      render: (text) => (
+        <Tooltip placement="right" title={renderText(text)}>
+          <div
+            className="two-row-ellipsis"
+            onClick={() => {
+              copyString(text);
+            }}
+          >
+            <a href="javascript:;">{text}</a>
+          </div>
+        </Tooltip>
+      ),
+    },
     {
       title: "所属应用",
       dataIndex: "projectId",
@@ -438,7 +508,9 @@ export const slowQueryColumns = (superApp: boolean) => {
         const projectName = formatProject(text);
         return (
           <Tooltip placement="right" title={renderText(projectName)}>
-            <div className="two-row-ellipsis slow-query-container-table-cell">{projectName}</div>
+            <div className="two-row-ellipsis slow-query-container-table-cell">
+              {projectName}
+            </div>
           </Tooltip>
         );
       },
@@ -454,7 +526,9 @@ export const slowQueryColumns = (superApp: boolean) => {
       dataIndex: "indices",
       render: (text) => (
         <Tooltip placement="right" title={renderText(text)}>
-          <div className="two-row-ellipsis slow-query-container-table-cell">{text || "-"}</div>
+          <div className="two-row-ellipsis slow-query-container-table-cell">
+            {text || "-"}
+          </div>
         </Tooltip>
       ),
     },
@@ -609,7 +683,13 @@ export type selectDt = {
   label: string;
 };
 
-export const getQueryFormConfig = (data = [], handleTimeChange, filterOption, superApp, error) => {
+export const getQueryFormConfig = (
+  data = [],
+  handleTimeChange,
+  filterOption,
+  superApp,
+  error
+) => {
   //export const getEditionQueryXForm = (data, handleTimeChange, resetAllValue: Function) => {
   const customTimeOptions = [
     {

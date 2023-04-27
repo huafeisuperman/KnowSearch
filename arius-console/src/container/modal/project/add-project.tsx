@@ -6,7 +6,13 @@ import { FormItemType, IFormItem } from "component/x-form";
 import { Transfer } from "antd";
 import { useGlobalLoginStatus } from "store";
 import { getUserList } from "api/logi-security";
-import { createProject, getUnassignedUsers, updateProject, updateOwner, updateUser } from "api/app-api";
+import {
+  createProject,
+  getUnassignedUsers,
+  updateProject,
+  updateOwner,
+  updateUser,
+} from "api/app-api";
 import { UserSelect } from "component/UserSelect";
 import { getCookie } from "lib/utils";
 import "./index.less";
@@ -31,7 +37,8 @@ const UserTransfer = (props: any) => {
 
   const [targetKeys, setTargetKeys] = React.useState(value || []);
   const [dataSource, setDataSource] = React.useState(list || []);
-  const filterOption = (inputValue: any, option: any) => option?.text?.indexOf(inputValue) > -1;
+  const filterOption = (inputValue: any, option: any) =>
+    option?.text?.indexOf(inputValue) > -1;
 
   React.useEffect(() => {
     if (isNew) {
@@ -58,7 +65,9 @@ const UserTransfer = (props: any) => {
           return {
             ...item,
             disabled: true,
-            label: <Tooltip title="管理员角色用户，不可删除！">{item.label}</Tooltip>,
+            label: (
+              <Tooltip title="管理员角色用户，不可删除！">{item.label}</Tooltip>
+            ),
             text: item.label,
           };
         } else {
@@ -91,7 +100,11 @@ const UserTransfer = (props: any) => {
   );
 };
 
-const AddOrEditProjectModal = (props: { dispatch: any; cb: any; params: any }) => {
+const AddOrEditProjectModal = (props: {
+  dispatch: any;
+  cb: any;
+  params: any;
+}) => {
   const { params = {}, cb } = props;
   const { type, callback, ownersList, usersList } = params || {};
   const [loginStatus, setLoginStatus] = useGlobalLoginStatus();
@@ -166,8 +179,12 @@ const AddOrEditProjectModal = (props: { dispatch: any; cb: any; params: any }) =
   };
 
   const editProject = async (values) => {
-    let adminIdList = (params?.userListWithAdminRole || []).map((item) => item.id);
-    let userList = (targetKeys || []).filter((item) => !adminIdList.includes(item));
+    let adminIdList = (params?.userListWithAdminRole || []).map(
+      (item) => item.id
+    );
+    let userList = (targetKeys || []).filter(
+      (item) => !adminIdList.includes(item)
+    );
 
     let project = {
       deptId: 0,
@@ -213,7 +230,8 @@ const AddOrEditProjectModal = (props: { dispatch: any; cb: any; params: any }) =
             required: true,
             whitespace: true,
             validator: (rule: any, value: string) => {
-              const reg = /^[a-zA-Z0-9\u4e00-\u9fa5][a-zA-Z0-9_\-\u4e00-\u9fa5]+$/;
+              const reg =
+                /^[a-zA-Z0-9\u4e00-\u9fa5][a-zA-Z0-9_\-\u4e00-\u9fa5]+$/;
 
               if (!value) {
                 return Promise.reject("请输入应用名称");
@@ -222,7 +240,9 @@ const AddOrEditProjectModal = (props: { dispatch: any; cb: any; params: any }) =
                 return Promise.reject("请输入8-30字符");
               }
               if (!reg.test(value)) {
-                return Promise.reject("应用名称不能以_、-为前缀， 支持中文、英文、数字、-、_，8-30位字符");
+                return Promise.reject(
+                  "应用名称不能以_、-为前缀， 支持中文、英文、数字、-、_，8-30位字符"
+                );
               } else {
                 return Promise.resolve();
               }
@@ -252,7 +272,7 @@ const AddOrEditProjectModal = (props: { dispatch: any; cb: any; params: any }) =
             required: true,
             message: "请选择责任人",
             validator: (rule: any, value: any) => {
-              if (!ownerIdList.length) return Promise.reject("请选择责任人");
+              if (!value.length) return Promise.reject("请选择责任人");
               return Promise.resolve();
             },
           },
@@ -267,7 +287,9 @@ const AddOrEditProjectModal = (props: { dispatch: any; cb: any; params: any }) =
           <UserTransfer
             list={list}
             isNew={!params || type === "create"}
-            userListWithAdminRole={params?.userListWithAdminRole || userListWithAdminRole}
+            userListWithAdminRole={
+              params?.userListWithAdminRole || userListWithAdminRole
+            }
             fetchOptions={(value) => fetchOptions(value, 2000)}
             onChange={(key) => {
               setTargetKeys(key);
@@ -334,8 +356,11 @@ const AddOrEditProjectModal = (props: { dispatch: any; cb: any; params: any }) =
 
   const xFormModalConfig = {
     visible: true,
-    title: type === "create" ? "创建应用" : props.params ? "编辑应用" : "新建应用",
-    formData: { slowQueryTimes: 1000, ...props.params } || { slowQueryTimes: 1000 },
+    title:
+      type === "create" ? "创建应用" : props.params ? "编辑应用" : "新建应用",
+    formData: { slowQueryTimes: 1000, ...props.params } || {
+      slowQueryTimes: 1000,
+    },
     isWaitting: true,
     width: 660,
     onChangeVisible: () => {
@@ -364,7 +389,12 @@ const AddOrEditProjectModal = (props: { dispatch: any; cb: any; params: any }) =
 
   return (
     <>
-      <XFormWrapper visible={true} type="drawer" {...xFormModalConfig} {...renderFormMap()} />
+      <XFormWrapper
+        visible={true}
+        type="drawer"
+        {...xFormModalConfig}
+        {...renderFormMap()}
+      />
     </>
   );
 };

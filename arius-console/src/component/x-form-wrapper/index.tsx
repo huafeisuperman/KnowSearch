@@ -45,7 +45,6 @@ export const XFormWrapper = React.forwardRef((props: IXFormWrapper, ref) => {
   };
 
   const handleCancel = () => {
-    // tslint:disable-next-line:no-unused-expression
     onCancel && onCancel();
     resetForm();
     closeModalWrapper();
@@ -62,7 +61,6 @@ export const XFormWrapper = React.forwardRef((props: IXFormWrapper, ref) => {
             onSubmit(result)
               .then((res: any) => {
                 setConfirmLoading(false);
-
                 if (typeof actionAfterSubmit === "function") {
                   actionAfterSubmit(res);
                 }
@@ -86,8 +84,6 @@ export const XFormWrapper = React.forwardRef((props: IXFormWrapper, ref) => {
             onSubmit(result).finally(() => setConfirmLoading(false));
             return;
           }
-
-          // tslint:disable-next-line:no-unused-expression
           onSubmit && onSubmit(result);
           closeModalWrapper();
         }

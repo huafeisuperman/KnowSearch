@@ -10,6 +10,7 @@ const { RangePicker } = DatePicker;
 export enum FormItemType {
   input = "input",
   inputNumber = "input_number",
+  inputPassword='inputPassword',
   textArea = "text_area",
   select = "select",
   _switch = "_switch",
@@ -76,6 +77,8 @@ export const renderFormItem = (item: IFormItem) => {
     default:
     case FormItemType.input:
       return <Input allowClear key={item.key} {...item.attrs} />;
+    case FormItemType.inputPassword:
+      return <Input.Password visibilityToggle={false} allowClear key={item.key} {...item.attrs} />;
     case FormItemType.inputNumber:
       return <InputNumber {...item.attrs} />;
     case FormItemType.textArea:
