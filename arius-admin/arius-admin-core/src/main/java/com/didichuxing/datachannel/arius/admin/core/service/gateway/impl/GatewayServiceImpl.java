@@ -55,7 +55,7 @@ public class GatewayServiceImpl implements GatewayService {
     @Autowired
     private ComponentDomainService componentDomainService;
 
-    private Set<String>           clusterNames;
+    //private Set<String>           clusterNames;
 
     @PostConstruct
     public void init() {
@@ -80,6 +80,8 @@ public class GatewayServiceImpl implements GatewayService {
             return Result.buildFail("save db fail");
         }
 
+        //每次从db获取
+        Set<String> clusterNames = reloadClusterName();
         if (!clusterNames.contains(heartbeat.getClusterName())) {
             saveGatewayCluster(heartbeat.getClusterName());
         }
@@ -112,10 +114,11 @@ public class GatewayServiceImpl implements GatewayService {
      * 重新加载集群
      */
     @Override
-    public void reloadClusterName() {
-        clusterNames = Sets.newConcurrentHashSet();
+    public Set<String> reloadClusterName() {
+        Set<String> clusterNames = Sets.newConcurrentHashSet();
         clusterNames.addAll(
             gatewayClusterDAO.listAll().stream().map(GatewayClusterPO::getClusterName).collect(Collectors.toSet()));
+        return clusterNames;
     }
 
     @Override
@@ -224,8 +227,6 @@ public class GatewayServiceImpl implements GatewayService {
     private void saveGatewayCluster(String clusterName) {
         GatewayClusterPO gatewayClusterPO = new GatewayClusterPO();
         gatewayClusterPO.setClusterName(clusterName);
-        if (1 == gatewayClusterDAO.insert(gatewayClusterPO)) {
-            clusterNames.add(clusterName);
-        }
+        gatewayClusterDAO.insert(gatewayClusterPO);
     }
 }

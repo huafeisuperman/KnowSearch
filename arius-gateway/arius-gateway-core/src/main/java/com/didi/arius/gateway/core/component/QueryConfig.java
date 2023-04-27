@@ -86,8 +86,9 @@ public class QueryConfig {
 
 	@Value("${gateway.write.log.content.open:false}")
 	private boolean writeLogContentOpen;
-		@Value("${arius.gateway.name:" + QueryConsts.GATEWAY_GROUP + "}")
-		private String clusterName;
+
+	@Value("${arius.gateway.name:" + QueryConsts.GATEWAY_GROUP + "}")
+	private String clusterName;
 
 	public QueryConfig() {
 		// pass
