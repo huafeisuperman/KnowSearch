@@ -55,15 +55,6 @@ public class GatewayServiceImpl implements GatewayService {
     @Autowired
     private ComponentDomainService componentDomainService;
 
-    //private Set<String>           clusterNames;
-
-    @PostConstruct
-    public void init() {
-        LOGGER.info("class=GatewayManageServiceImpl||method=init||GatewayManageServiceImpl init start.");
-        reloadClusterName();
-        LOGGER.info("class=GatewayManageServiceImpl||method=init||GatewayManageServiceImpl init finished.");
-    }
-
     /**
      * gateway节点提交心跳
      *
