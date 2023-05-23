@@ -28,10 +28,10 @@ public abstract class ESActionRequest<T extends ESActionRequest> extends ActionR
         newHeaders.addAll(headers);
         if (this.headers != null) {
             for (Map.Entry<String, Object> entry : this.headers.entrySet()) {
-                if("Authorization".equals(entry.getKey())){
+                /*if("Authorization".equals(entry.getKey())){
                     //为了接入带认证es集群，这个判断会使action下传的Auth失效,直接使用client的Auth
                     continue;
-                }
+                }*/
                 Header header = new BasicHeader(entry.getKey(), entry.getValue().toString());
                 newHeaders.add(header);
             }

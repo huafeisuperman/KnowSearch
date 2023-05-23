@@ -193,6 +193,7 @@ public class ESRestClientServiceImpl implements ESRestClientService {
 
             String hostName = substringBeforeLast(clusterNode, COLON);
             String port = substringAfterLast(clusterNode, COLON);
+
             bootLogger.info("adding http client node={}||clusterName={}", clusterNode, dataCenter.getCluster());
             try {
                 client.addHttpHost(hostName, Integer.valueOf(port));
@@ -203,7 +204,10 @@ public class ESRestClientServiceImpl implements ESRestClientService {
 
         //开源gateway为了支持带认证的集群使用gateway访问
 		if (!Strings.isEmpty(dataCenter.getPassword())) {
-			client.setBasicAuth(dataCenter.getPassword());
+//			client.setBasicAuth(dataCenter.getPassword());
+            String username = substringBefore(dataCenter.getPassword(), COLON);
+            String password = substringAfter(dataCenter.getPassword(), COLON);
+            client.addUser(username, password);
 		}
 
         if (!client.getEsVersion().startsWith(QueryConsts.ES_VERSION_2_PREFIX)) {

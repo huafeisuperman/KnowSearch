@@ -11,6 +11,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.message.BasicHeader;
 import org.elasticsearch.action.*;
@@ -28,6 +32,9 @@ public class ESClient extends ESAbstractClient {
 
     private List<TransportAddress> tas = new ArrayList<>();
     private List<HttpHost> nodes = new ArrayList<>();
+
+    private String username;
+    private String password;
 
     private RestClient restClient;
     private List<Header> headers = new ArrayList<>();
@@ -81,6 +88,12 @@ public class ESClient extends ESAbstractClient {
 
     public ESClient addHttpHost(String host, int port) {
         nodes.add(new HttpHost(host, port));
+        return this;
+    }
+
+    public ESClient addUser(String username, String password) {
+        this.username = username;
+        this.password = password;
         return this;
     }
 
@@ -138,7 +151,13 @@ public class ESClient extends ESAbstractClient {
                 .setHttpClientConfigCallback((httpClientBuilder) -> {
                     httpClientBuilder.setMaxConnPerRoute(max_conn_per_router);
                     httpClientBuilder.setMaxConnTotal(max_conn_total);
-
+                    if (null != username && null != password) {
+                        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(username,
+                                password);
+                        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                        credentialsProvider.setCredentials(AuthScope.ANY, creds);
+                        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+                    }
                     return httpClientBuilder;
                 })
                 .setMaxRetryTimeoutMillis(maxRetryTimeout)

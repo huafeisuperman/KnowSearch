@@ -27,6 +27,16 @@ public class ESUserPO extends BasePO {
     private Integer isRoot;
 
     /**
+     * es集群用户名
+     */
+    private String username;
+
+    /**
+     * es集群用户密码
+     */
+    private String  password;
+
+    /**
      * 验证码
      */
     private String  verifyCode;

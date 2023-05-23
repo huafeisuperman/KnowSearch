@@ -18,6 +18,8 @@ public class AppDetailResponse {
 	private Integer projectId;
 	private List<String> indexExp;
 	private List<String> windexExp;
+	private String username;
+	private String password;
 	private String verifyCode;
 	private List<String> ip;
 	private String cluster;

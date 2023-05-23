@@ -168,7 +168,9 @@ public class GatewayManagerTest {
         when(mockProjectService.getProjectBriefList()).thenReturn(projectBriefVOS);
 
         // Configure ESUserService.listESUsers(...).
-        final List<ESUser> esUsers = Arrays.asList(new ESUser(0, "name", 0, "verifyCode",  "memo", 0, 0, "cluster", 0, "dataCenter", 1, false, "ip", "indexExp"));
+        final List<ESUser> esUsers = Arrays.asList(new ESUser(0, "name", 0, "username", "pwd", "verifyCode",  "memo", 0
+                , 0,
+                "cluster", 0, "dataCenter", 1, false, "ip", "indexExp"));
         when(mockEsUserService.listESUsers(Arrays.asList(1))).thenReturn(esUsers);
 
         when(mockProjectConfigService.projectId2ProjectConfigMap()).thenReturn(new HashMap<>());
@@ -308,13 +310,13 @@ public class GatewayManagerTest {
         when(mockEsUserService.checkDefaultESUserByProject(0)).thenReturn(false);
 
         // Configure ESUserService.getDefaultESUserByProject(...).
-        final ESUser esUser = new ESUser(0, "name", 0, "verifyCode",
+        final ESUser esUser = new ESUser(0, "name", 0, "username", "pwd", "verifyCode",
             "memo", 0, 0, "cluster", 0, "dataCenter", 0, false, "ip", "indexExp");
         when(mockEsUserService.getDefaultESUserByProject(0)).thenReturn(esUser);
 
         when(
             mockGatewayService.sqlOperate("sql", "phyClusterName",
-                new ESUser(0, "name", 0, "verifyCode",  "memo", 0, 0,
+                new ESUser(0, "name", 0, "username", "pwd", "verifyCode",  "memo", 0, 0,
                     "cluster", 0, "dataCenter", 0, false, "ip", "indexExp"),
                 "SQL_EXPLAIN")).thenReturn(Result.buildFail("value"));
 
@@ -332,13 +334,13 @@ public class GatewayManagerTest {
         when(mockEsUserService.checkDefaultESUserByProject(0)).thenReturn(false);
 
         // Configure ESUserService.getDefaultESUserByProject(...).
-        final ESUser esUser = new ESUser(0, "name", 0, "verifyCode",
+        final ESUser esUser = new ESUser(0, "name", 0, "username", "pwd", "verifyCode",
             "memo", 0, 0, "cluster", 0, "dataCenter", 0, false, "ip", "indexExp");
         when(mockEsUserService.getDefaultESUserByProject(0)).thenReturn(esUser);
 
         when(
             mockGatewayService.sqlOperate("sql", "phyClusterName",
-                new ESUser(0, "name", 0, "verifyCode",  "memo", 0, 0,
+                new ESUser(0, "name", 0, "username", "pwd", "verifyCode",  "memo", 0, 0,
                     "cluster", 0, "dataCenter", 0, false, "ip", "indexExp"),
                 "SQL_SEARCH")).thenReturn(Result.buildFail("value"));
 

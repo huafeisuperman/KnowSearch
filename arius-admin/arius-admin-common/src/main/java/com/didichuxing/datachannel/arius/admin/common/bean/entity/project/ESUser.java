@@ -21,6 +21,10 @@ public class ESUser extends BaseEntity {
 
     private Integer isRoot;
 
+    private String username;
+
+    private String password;
+
     private String  verifyCode;
 
  

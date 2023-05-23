@@ -26,6 +26,16 @@ public class AppDetail {
     private List<String> windexExp;
 
     /**
+     * es集群用户名
+     */
+    private String username;
+
+    /**
+     * es集群用户密码
+     */
+    private String password;
+
+    /**
      * appid校验码
      */
     private String verifyCode;
