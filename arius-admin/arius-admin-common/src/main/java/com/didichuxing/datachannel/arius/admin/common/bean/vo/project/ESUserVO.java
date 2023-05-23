@@ -25,6 +25,12 @@ public class ESUserVO extends BaseVO {
     @ApiModelProperty("root用户")
     private Integer isRoot;
 
+    @ApiModelProperty("es用户")
+    private String username;
+
+    @ApiModelProperty("es用户密码")
+    private String password;
+
     @ApiModelProperty("验证码")
     private String  verifyCode;
 
