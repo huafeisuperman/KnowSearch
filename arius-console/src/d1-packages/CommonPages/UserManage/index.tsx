@@ -267,7 +267,7 @@ export const UserManage = () => {
     return (
       <>
         <Button type="primary" onClick={addUser}>
-          新增用户
+          新建用户
         </Button>
       </>
     );
