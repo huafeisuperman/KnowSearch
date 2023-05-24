@@ -26,8 +26,6 @@ export const RegAddForm: React.FC<any> = (props: {
       email,
       phone,
     };
-    console.log("提交", req);
-
     userRegister(req)
       .then(() => {
         message.success("新建成功");

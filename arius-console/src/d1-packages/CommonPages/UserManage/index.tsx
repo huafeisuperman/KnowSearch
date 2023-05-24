@@ -258,11 +258,9 @@ export const UserManage = () => {
   };
   const [open, setOpen] = useState(false);
   const addUser = () => {
-    console.log("新增用户");
     setOpen(true);
   };
   const onClose = () => {
-    console.log("关闭");
     setOpen(false);
   };
   const getJsxElement = () => {
