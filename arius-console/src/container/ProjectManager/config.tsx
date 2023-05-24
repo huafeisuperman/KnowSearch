@@ -145,6 +145,18 @@ export const getAccessSettingColumns = () => {
       key: "verifyCode",
     },
     {
+      title: "ES账号",
+      dataIndex: "username",
+      key: "username",
+      render: (val: string) => val || "-",
+    },
+    {
+      title: "ES密码",
+      dataIndex: "password",
+      key: "password",
+      render: (val: string) => val || "-",
+    },
+    {
       title: "访问模式",
       dataIndex: "searchType",
       key: "searchType",

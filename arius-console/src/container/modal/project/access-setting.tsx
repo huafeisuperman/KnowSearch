@@ -274,6 +274,8 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
         searchType: result.searchType,
         queryThreshold: result.queryThreshold,
         cluster: searchType !== 1 ? result.selectCluster : undefined,
+        username: result.username,
+        password: result.password,
       }).then((res) => {
         getData();
       });
@@ -282,6 +284,8 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
         searchType: result.searchType,
         queryThreshold: result.queryThreshold,
         cluster: searchType !== 1 ? result.selectCluster : undefined,
+        username: result.username,
+        password: result.password,
       }).then(() => {
         getData();
       });
