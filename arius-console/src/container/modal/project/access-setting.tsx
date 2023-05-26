@@ -268,7 +268,7 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
 
   const onModalSubmit = (result) => {
     if (opType.current === "edit") {
-      updateAppByProjectId({
+      const editData = {
         projectId: params.id,
         id: currentRecord.current.id,
         searchType: result.searchType,
@@ -276,17 +276,20 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
         cluster: searchType !== 1 ? result.selectCluster : undefined,
         username: result.username,
         password: result.password,
-      }).then((res) => {
+      };
+
+      updateAppByProjectId(editData).then((res) => {
         getData();
       });
     } else {
-      createAppByProjectId(params.id, {
+      const addData = {
         searchType: result.searchType,
         queryThreshold: result.queryThreshold,
         cluster: searchType !== 1 ? result.selectCluster : undefined,
         username: result.username,
         password: result.password,
-      }).then(() => {
+      };
+      createAppByProjectId(params.id, addData).then(() => {
         getData();
       });
     }
@@ -295,7 +298,7 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
 
   return (
     <>
-      <Drawer onClose={onCancel} width={800} visible={true} title="访问设置">
+      <Drawer onClose={onCancel} width={1040} visible={true} title="访问设置">
         <div className="add-esuser">
           <Button onClick={() => onClickAddOrEdit("add")} type="primary">
             新建ES_User

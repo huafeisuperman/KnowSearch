@@ -317,6 +317,7 @@ export const UserManage = () => {
         title="新建用户"
         placement="right"
         width="500"
+        destroyOnClose={true}
         className="add-user-drawer"
         onClose={onClose}
         visible={open}

@@ -1,9 +1,10 @@
 import * as React from "react";
 import { formatDate } from "knowdesign/lib/utils/tools";
 import { renderAttributes } from "container/custom-component";
-import { Input, InputNumber, Select, Tooltip } from "antd";
-import { regUserPassword } from "constants/reg";
-import { checkRegisterUser } from "api/logi-security";
+import { Input, InputNumber, Select, Button, Tooltip, Form, message, } from "antd";
+import { regChecCode, regUserPassword } from "constants/reg";
+import { checkRegisterUser, updateUserInfo } from "api/logi-security";
+import { CloseOutlined } from "@ant-design/icons";
 export interface ITableBtn {
   clickFunc?: () => void;
   type?: string;
@@ -169,9 +170,151 @@ export const readableForm = [
   {
     flag: ["detail"],
     label: "密码",
-    prop: "password",
+    prop: "userName",
     readText: "",
-    render: (text) => text || "-",
+    render: (userName) => {
+      const [open, setOpen] = React.useState(false);
+      const handleClick = () => {
+        setOpen(true);
+      };
+
+      const description = () => {
+        const onFinish = async ({ pw }) => {
+          const req = {
+            userName,
+            pw,
+            ignorePasswordMatching: true,
+          };
+          const { res } = await updateUserInfo(req);
+          if (res.code === 0) {
+            message.success("重置成功");
+          } else {
+            message.error("重置失败");
+          }
+          cancelSbm();
+        };
+
+        const cancelSbm = () => {
+          formRef.resetFields();
+          setOpen(false);
+        };
+
+        const tailLayout = {
+          wrapperCol: { offset: 8, span: 16 },
+        };
+        const [formRef] = Form.useForm();
+        return (
+          <div
+            className="reset-form-blk"
+            style={{
+              display: open ? "block" : "none",
+            }}
+          >
+            <Form
+              name="basic"
+              form={formRef}
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 16 }}
+              style={{ maxWidth: 600 }}
+              initialValues={{ remember: true }}
+              onFinish={onFinish}
+              autoComplete="off"
+            >
+              <div className="reset-title">
+                <span className="title"> {"重置密码"}</span>
+                <span className="reset-icon" onClick={cancelSbm}>
+                  <CloseOutlined />
+                </span>
+              </div>
+              <Form.Item
+                label="新密码"
+                name="pw"
+                rules={[
+                  {
+                    required: true,
+                    message: "密码支持中英文字母、数字，标点符号，6-128位字符",
+                  },
+                  {
+                    validator: (rule: any, value: string) => {
+                      if (value && !new RegExp(regChecCode).test(value)) {
+                        return Promise.reject(
+                          new Error(
+                            "密码支持中英文字母、数字，标点符号，6-128位字符"
+                          )
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+                style={{
+                  marginBottom: "20px",
+                }}
+              >
+                <Input allowClear />
+              </Form.Item>
+              <Form.Item
+                label="确认密码"
+                name="confirm"
+                rules={[
+                  {
+                    required: true,
+                    message: "两次密码不一致",
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("pw") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject("两次密码不一致");
+                    },
+                  }),
+                ]}
+              >
+                <Input allowClear />
+              </Form.Item>
+              <Form.Item
+                {...tailLayout}
+                style={{
+                  marginTop: "20px",
+                }}
+              >
+                <Button
+                  htmlType="button"
+                  onClick={cancelSbm}
+                  style={{
+                    margin: "0 20px",
+                  }}
+                >
+                  取消
+                </Button>
+                <Button type="primary" htmlType="submit">
+                  确认
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+        );
+      };
+      return (
+        <div className="pswd-blk">
+          {"******"}
+          <Button
+            onClick={handleClick}
+            style={{
+              width: "64px",
+              height: "32px",
+              marginLeft: "15px",
+              padding: 0,
+            }}
+            type="primary"
+          >
+            {"重置"}
+          </Button>
+          {description()}
+        </div>
+      );
+    },
   },
   {
     flag: ["detail", "update"],
