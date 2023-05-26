@@ -7,7 +7,7 @@ import { XNotification } from "component/x-notification";
 import { Select } from "knowdesign";
 import { newClusterList, getSenseOperate, setSenseOperate } from "api/cluster-api";
 import Url from "lib/url-parser";
-import { IndexSelect } from "../IndexSelect";
+import { IndexSelect2 } from "../IndexSelect";
 import { connect } from "react-redux";
 import { AppState } from "store/type";
 import { RenderEmpty } from "component/LogClusterEmpty";
@@ -165,7 +165,7 @@ export const DslPage = connect(mapStateToProps)((props: { app: AppState }) => {
               currentCluster={{ id, noInfoAction: showNoClusterTip }}
               prefix={`${getCookie("userName") || ""}-${getCurrentProject()?.id || ""}`}
               notifications={XNotification}
-              IndexSelect={IndexSelect}
+              IndexSelect={IndexSelect2}
               isSuperApp={!!isSuperApp()}
             />
           ) : null}
