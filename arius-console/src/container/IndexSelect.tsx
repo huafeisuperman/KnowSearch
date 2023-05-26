@@ -43,9 +43,10 @@ export const IndexSelect = forwardRef((props: any, ref) => {
     });
   };
 
-  const onChange = (index) => {
-    setValue(index);
-    getIndexDsl(index);
+  const onChange = (index: any) => {
+    const output = index.slice(-1);
+    setValue(output);
+    getIndexDsl(output);
   };
 
   const handleSearch = debounce((newValue: string) => {
@@ -57,7 +58,13 @@ export const IndexSelect = forwardRef((props: any, ref) => {
   }));
 
   return (
-    <Select showSearch value={value} onChange={onChange} placeholder="请选择索引">
+    <Select
+      showSearch
+      value={value}
+      onChange={onChange}
+      placeholder="请选择索引"
+      mode="tags"
+    >
       {list?.map((item: any) => (
         <Select.Option value={item} key={uuid()}>
           {item}
