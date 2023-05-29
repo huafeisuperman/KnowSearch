@@ -144,7 +144,8 @@ public class OperateRecordManagerImpl implements OperateRecordManager {
         List<String> operateRecordList = new ArrayList<>();
         if(CollectionUtils.isEmpty(operateRecordVOList)){
             //只有拥有管理员权限的才能被赋予默认命令
-            final List<UserBriefVO> userBriefListWithAdminRole = userService.getUserBriefListByRoleId(AuthConstant.ADMIN_ROLE_ID);
+            final List<UserBriefVO> userBriefListWithAdminRole =
+                    userService.getUserBriefListByRoleType(AuthConstant.ADMIN_ROLE_TYPE);
             if(userBriefListWithAdminRole.stream().map(UserBriefVO::getUserName).anyMatch(userName->operator.equals(userName))
                     && AuthConstant.SUPER_PROJECT_ID.equals(projectId)){
                 //查询平台配置中的超级应用的默认命令

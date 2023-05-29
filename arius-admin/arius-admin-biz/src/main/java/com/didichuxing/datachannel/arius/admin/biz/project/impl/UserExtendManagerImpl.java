@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.didichuxing.datachannel.arius.admin.core.component.RoleTool;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,6 @@ import com.didichuxing.datachannel.arius.admin.common.bean.common.Result;
 import com.didichuxing.datachannel.arius.admin.common.bean.dto.app.UserExtendDTO;
 import com.didichuxing.datachannel.arius.admin.common.bean.dto.app.UserQueryExtendDTO;
 import com.didichuxing.datachannel.arius.admin.common.bean.vo.project.UserExtendVO;
-import com.didichuxing.datachannel.arius.admin.common.bean.vo.project.UserWithPwVO;
 import com.didichuxing.datachannel.arius.admin.common.constant.AuthConstant;
 import com.didichuxing.datachannel.arius.admin.common.constant.operaterecord.OperateTypeEnum;
 import com.didichuxing.datachannel.arius.admin.common.constant.operaterecord.TriggerWayEnum;
@@ -71,6 +71,8 @@ public class UserExtendManagerImpl implements UserExtendManager {
     private UserDao userDao;
     @Autowired
     private ProjectDao projectDao;
+    @Autowired
+    private RoleTool roleTool;
 
     private final static int NORMAL = 0;
     private final static int OWNER  = 1;
@@ -106,8 +108,7 @@ public class UserExtendManagerImpl implements UserExtendManager {
         if(StringUtils.isNotBlank(queryDTO.getRealName())){
             queryDTO.setRealName(CommonUtils.sqlFuzzyQueryTransfer(queryDTO.getRealName()));
         }
-        final List<UserBriefVO> userBriefListByAdmin = userService.getUserBriefListByRoleId(
-                AuthConstant.ADMIN_ROLE_ID);
+        final List<UserBriefVO> userBriefListByAdmin = userService.getUserBriefListByRoleType(AuthConstant.ADMIN_ROLE_TYPE);
         PagingData<UserExtendVO> userPage;
         if (Boolean.FALSE.equals(queryDTO.getContainsAdminRole())) {
             final int page = queryDTO.getPage();
@@ -148,8 +149,8 @@ public class UserExtendManagerImpl implements UserExtendManager {
                     //如果可以匹配到管理员角色
                     List<ProjectBriefVO> briefList;
                     final List<RoleBriefVO> roleList = userVO.getRoleList();
-                    if (CollectionUtils.isNotEmpty(roleList) && roleList.stream()
-                            .anyMatch(roleBrief -> Objects.equals(roleBrief.getId(), AuthConstant.ADMIN_ROLE_ID))) {
+                    if (CollectionUtils.isNotEmpty(roleList) &&
+                            roleTool.isAdminByRoleId(roleList.stream().map(RoleBriefVO::getId).collect(Collectors.toList()))) {
                         briefList = projectBriefList;
                     
                     } else {
@@ -217,14 +218,13 @@ public class UserExtendManagerImpl implements UserExtendManager {
      * @throws KfSecurityException 用户不存在
      */
     @Override
-    public Result<UserWithPwVO> getUserDetailByUserId(Integer userId, Integer projectId) throws Exception {
+    public Result<UserVO> getUserDetailByUserId(Integer userId, Integer projectId) throws Exception {
         final UserVO userVO = userService.getUserDetailByUserId(userId);
         final List<RoleBriefVO> roleList = Optional.ofNullable(userVO.getRoleList()).orElse(Lists.newArrayList());
         final List<Integer> roleIds = roleList.stream().map(RoleBriefVO::getId).collect(Collectors.toList());
         //传入项目id判断是否是超级项目,如果是则判断是否为管理员,然后返回权限点
         if (Objects.nonNull(projectId)) {
-            if (AuthConstant.SUPER_PROJECT_ID.equals(projectId)
-                && roleIds.stream().anyMatch(id -> Objects.equals(id, AuthConstant.ADMIN_ROLE_ID))) {
+            if (AuthConstant.SUPER_PROJECT_ID.equals(projectId) && roleTool.isAdminByRoleId(roleIds)) {
                 final List<Integer> hasPermissionIdList = rolePermissionService
                     .getPermissionIdListByRoleIdList(Collections.singletonList(AuthConstant.ADMIN_ROLE_ID));
                 // 构建权限树
@@ -241,8 +241,7 @@ public class UserExtendManagerImpl implements UserExtendManager {
 
         }
         List<ProjectBriefVO> projectBriefList;
-        if (roleList.stream()
-                .anyMatch(roleBriefVO -> Objects.equals(roleBriefVO.getId(), AuthConstant.ADMIN_ROLE_ID))) {
+        if (roleTool.isAdminByRoleId(roleIds)) {
             projectBriefList = projectService.getProjectBriefList();
         } else {
             projectBriefList = Optional.ofNullable(userVO.getProjectList()).orElse(Collections.emptyList()).stream()
@@ -250,10 +249,10 @@ public class UserExtendManagerImpl implements UserExtendManager {
         }
     
         userVO.setProjectList(projectBriefList);
-        UserWithPwVO userWithPwVO = ConvertUtil.obj2Obj(userVO, UserWithPwVO.class);
-        userWithPwVO.setPassword(PWEncryptUtil.decode(userDao.selectByUserId(userId).getPw()));
+//        UserWithPwVO userWithPwVO = ConvertUtil.obj2Obj(userVO, UserWithPwVO.class);
+//        userWithPwVO.setPassword(PWEncryptUtil.decode(userDao.selectByUserId(userId).getPw()));
 
-        return Result.buildSucc(userWithPwVO);
+        return Result.buildSucc(userVO);
     }
 
     /**
@@ -468,9 +467,9 @@ public class UserExtendManagerImpl implements UserExtendManager {
         }
         return Result.buildSucc();
     }
-    
- 
-    
+
+
+
     /**
      * @param ids
      * @return

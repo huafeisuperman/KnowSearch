@@ -1,32 +1,29 @@
 package com.didichuxing.datachannel.arius.admin.rest.controller.v3.project;
 
-import static com.didichuxing.datachannel.arius.admin.common.constant.ApiVersion.V3_SECURITY;
-
-import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.didichuxing.datachannel.arius.admin.biz.project.UserExtendManager;
 import com.didichuxing.datachannel.arius.admin.common.bean.common.Result;
 import com.didichuxing.datachannel.arius.admin.common.bean.dto.app.UserExtendDTO;
 import com.didichuxing.datachannel.arius.admin.common.bean.dto.app.UserQueryExtendDTO;
 import com.didichuxing.datachannel.arius.admin.common.bean.vo.project.UserExtendVO;
-import com.didichuxing.datachannel.arius.admin.common.bean.vo.project.UserWithPwVO;
 import com.didichuxing.datachannel.arius.admin.core.component.RoleTool;
 import com.didiglobal.knowframework.security.common.PagingResult;
 import com.didiglobal.knowframework.security.common.dto.user.UserDTO;
 import com.didiglobal.knowframework.security.common.vo.role.AssignInfoVO;
 import com.didiglobal.knowframework.security.common.vo.user.UserBriefVO;
+import com.didiglobal.knowframework.security.common.vo.user.UserVO;
 import com.didiglobal.knowframework.security.util.HttpRequestUtil;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Optional;
+
+import static com.didichuxing.datachannel.arius.admin.common.constant.ApiVersion.V3_SECURITY;
 
 /**
  * 用户v3控制器
@@ -67,7 +64,7 @@ public class UserV3Controller {
     @GetMapping("/{id}")
     @ApiOperation(value = "获取用户详情", notes = "根据用户id获取用户详情")
     @ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "用户id", dataType = "int", paramType = "query", required = true) })
-    public Result<UserWithPwVO> detail(HttpServletRequest request, @PathVariable Integer id) throws Exception {
+    public Result<UserVO> detail(HttpServletRequest request, @PathVariable Integer id) throws Exception {
         Integer projectId = Optional.ofNullable(HttpRequestUtil.getProjectId(request)).filter(i -> i > 0).orElse(null);
 
         return userManager.getUserDetailByUserId(id, projectId);

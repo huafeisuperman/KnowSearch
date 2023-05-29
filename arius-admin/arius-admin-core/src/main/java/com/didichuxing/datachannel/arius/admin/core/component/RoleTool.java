@@ -1,20 +1,15 @@
 package com.didichuxing.datachannel.arius.admin.core.component;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import com.didichuxing.datachannel.arius.admin.common.constant.AuthConstant;
+import com.didiglobal.knowframework.security.common.vo.user.UserBriefVO;
+import com.didiglobal.knowframework.security.service.RoleService;
+import com.didiglobal.knowframework.security.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
-import com.didichuxing.datachannel.arius.admin.common.constant.AuthConstant;
-import com.didiglobal.knowframework.security.common.vo.role.RoleVO;
-import com.didiglobal.knowframework.security.common.vo.user.UserBriefVO;
-import com.didiglobal.knowframework.security.common.vo.user.UserVO;
-import com.didiglobal.knowframework.security.service.RoleService;
-import com.didiglobal.knowframework.security.service.UserService;
+import java.util.List;
 
 /**
  * 角色工具
@@ -37,9 +32,11 @@ public class RoleTool {
      * @return boolean
      */
     public boolean isAdmin(String userName) {
-        final RoleVO roleVO = roleService.getRoleDetailByRoleId(AuthConstant.ADMIN_ROLE_ID);
-        return Optional.ofNullable(roleVO).map(RoleVO::getAuthedUsers).orElse(Collections.emptyList()).stream()
-            .anyMatch(user -> StringUtils.equals(user, userName));
+        List<UserBriefVO> userVOS = userService.getUserBriefListByRoleType(AuthConstant.ADMIN_ROLE_TYPE);
+        if (CollectionUtils.isEmpty(userVOS)) {
+            return false;
+        }
+        return userVOS.stream().map(UserBriefVO::getUserName).anyMatch(user -> StringUtils.equals(user, userName));
     }
 
     /**
@@ -48,17 +45,29 @@ public class RoleTool {
      * @return {@code List<UserBriefVO>}
      */
     public List<UserBriefVO> getAdminList() {
-        final RoleVO roleVO = roleService.getRoleDetailByRoleId(AuthConstant.ADMIN_ROLE_ID);
-        return Optional.ofNullable(roleVO).map(RoleVO::getAuthedUsers)
-
-            .orElse(Collections.emptyList()).stream().map(userService::getUserBriefByUserName)
-            .collect(Collectors.toList());
+        return userService.getUserBriefListByRoleType(AuthConstant.ADMIN_ROLE_TYPE);
     }
 
     public boolean isAdmin(Integer userId) {
-        final RoleVO roleVO = roleService.getRoleDetailByRoleId(AuthConstant.ADMIN_ROLE_ID);
-        final UserVO userVO = userService.getUserDetailByUserId(userId);
-        return Optional.ofNullable(roleVO).map(RoleVO::getAuthedUsers).orElse(Collections.emptyList()).stream()
-            .anyMatch(user -> StringUtils.equals(user, userVO.getUserName()));
+        List<UserBriefVO> userVOS = userService.getUserBriefListByRoleType(AuthConstant.ADMIN_ROLE_TYPE);
+        if (CollectionUtils.isEmpty(userVOS)) {
+            return false;
+        }
+        return userVOS.stream().map(UserBriefVO::getId).anyMatch(user -> user.equals(userId));
     }
+
+    /**
+     * 校验角色是否为管理员
+     *
+     * @param roleIds 角色id
+     * @return boolean
+     */
+    public boolean isAdminByRoleId(List<Integer> roleIds) {
+        List<Integer> adminRoleIds = roleService.selectByRoleType(AuthConstant.ADMIN_ROLE_TYPE);
+        if (CollectionUtils.isEmpty(adminRoleIds)) {
+            return false;
+        }
+        return adminRoleIds.stream().anyMatch(adminRoleId -> roleIds.contains(adminRoleId));
+    }
+
 }
