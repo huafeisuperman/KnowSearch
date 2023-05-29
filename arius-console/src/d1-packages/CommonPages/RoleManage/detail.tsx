@@ -1,5 +1,5 @@
 import React, { useState, useEffect, FC, useRef } from "react";
-import { Button, message, Drawer, Form, Input, Row, Col, Transfer, Checkbox, Descriptions } from "antd";
+import { Button, message, Drawer, Form, Input, Row, Col, Select } from "antd";
 import { readableForm } from "./config";
 import { queryRoleDetail, createOrUpdateRole, assignRole, queryPermissionTree, getRolePermission } from "./service";
 import "./detail.less";
@@ -31,6 +31,7 @@ export default function Detail(props: any) {
 
   const permissionRef: any = React.createRef();
   const currentSelectUser = useRef([]);
+  const [roleType, setroleType] = useState(0);
 
   const onSubmit = () => {
     if (flag === "assign") {
@@ -88,7 +89,7 @@ export default function Detail(props: any) {
               id: roleId,
               permissionIdList,
             };
-
+        params.roleType = roleType
         setSubmitLoading(true);
         createOrUpdateRole(isCreate, params)
           .then(() => {
@@ -118,6 +119,7 @@ export default function Detail(props: any) {
 
   const fetchDetail = async (roleId) => {
     setLoading(true);
+    let roleList = null
     try {
       const res: any = await queryRoleDetail(roleId);
       let permissionVoData =
@@ -132,17 +134,15 @@ export default function Detail(props: any) {
             isCheckAll: item.childList.every((subItem) => subItem.has),
           };
         });
-
       if (flag !== "update") {
         setDetailData(res);
       } else {
         form.setFieldsValue(res);
         // 编辑权限点时展示所有权限点
-        const roleList: any = await getRolePermission();
-
+          // roleList = await getRolePermission();
+          roleList = res.permissionTreeVO
         // roleList?.childList 中has表示该角色是否能展示权限点
-        const renderRoleList = (roleList?.childList || []).filter((item) => item.has);
-
+        let renderRoleList = (roleList?.childList || []).filter((item) => item.has);
         for (let item of renderRoleList) {
           // permissionVoData中has表示该权限点是否生效
           item.childList = (item.childList || []).filter((row) => row.has);
@@ -161,10 +161,12 @@ export default function Detail(props: any) {
         }
         permissionVoData = renderRoleList;
       }
-      setPermissionVo(permissionVoData);
+
+      let permission2 = (roleList.childList || []).map((item) => { return {...item } });
+      setPermissionVo((roleType=== 1 || res.roleType === 1 )&& flag === "update"? permission2 : permissionVoData);
       setLoading(false);
     } catch (err) {
-      setLoading(false);
+      setLoading(false); 
     }
   };
 
@@ -206,9 +208,23 @@ export default function Detail(props: any) {
   };
 
   const renderEditableCol = () => {
+    const handleChange = (val) => {  setroleType(val) };
     return (
       <Form layout="vertical" form={form}>
         <Row>
+        <Col span={24}>
+            <Form.Item label="角色类型" name="roleType">
+              <Select
+                defaultValue={roleType}
+                style={{ width: 160 }}
+                onChange={handleChange}
+                options={[
+                  { value: 0, label: "普通用户" },
+                  { value: 1, label: "管理员" },
+                ]}
+              />
+            </Form.Item>
+          </Col>
           <Col span={24}>
             <Form.Item
               label="角色名称"
@@ -272,13 +288,13 @@ export default function Detail(props: any) {
 
   const renderContent = () => {
     // 编辑权限点不做过滤，查看详情和新建角色过滤掉不可展示的权限点
-    const permissionData = flag === "detail" || flag === "create" ? filterPermission(permissionVo) : permissionVo;
+    const permissionData = ( flag === "detail" || flag === "create") ? filterPermission(permissionVo) : permissionVo;
     return (
       <PermissionTree
         ref={permissionRef}
         isUpdate={flag === "update" || flag === "create"}
         isEdit={flag !== "detail"}
-        permissionData={permissionData}
+        permissionData={ roleType === 1 ? permissionVo: permissionData}
       />
     );
   };
@@ -335,7 +351,7 @@ export default function Detail(props: any) {
       permissionRef.current = null;
       currentSelectUser.current = null;
     };
-  }, []);
+  }, [roleType]);
 
   return (
     <Drawer
