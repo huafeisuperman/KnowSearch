@@ -224,16 +224,19 @@ public class UserExtendManagerImpl implements UserExtendManager {
         final List<Integer> roleIds = roleList.stream().map(RoleBriefVO::getId).collect(Collectors.toList());
         //传入项目id判断是否是超级项目,如果是则判断是否为管理员,然后返回权限点
         if (Objects.nonNull(projectId)) {
-            if (AuthConstant.SUPER_PROJECT_ID.equals(projectId)
-                    && roleIds.stream().anyMatch(id -> Objects.equals(id, AuthConstant.ADMIN_ROLE_ID))) {
+            if (AuthConstant.SUPER_PROJECT_ID.equals(projectId) && roleTool.isAdminByRoleId(roleIds)) {
+                List<Integer> adminIdLists =
+                        roleList.stream().filter(role -> AuthConstant.ADMIN_ROLE_TYPE.equals(role.getRoleType()))
+                        .map(RoleBriefVO::getId).collect(Collectors.toList());
                 final List<Integer> hasPermissionIdList = rolePermissionService
-                    .getPermissionIdListByRoleIdList(Collections.singletonList(AuthConstant.ADMIN_ROLE_ID));
+                    .getPermissionIdListByRoleIdList(adminIdLists);
                 // 构建权限树
                 userVO.setPermissionTreeVO(permissionService.buildPermissionTreeWithHas(hasPermissionIdList));
             } else {
                 //删除管理员id
-                List<Integer> notAdminIdLists = roleIds.stream().filter(id -> !AuthConstant.ADMIN_ROLE_ID.equals(id))
-                    .collect(Collectors.toList());
+                List<Integer> notAdminIdLists =
+                        roleList.stream().filter(role -> !AuthConstant.ADMIN_ROLE_TYPE.equals(role.getRoleType()))
+                        .map(RoleBriefVO::getId).collect(Collectors.toList());
                 final List<Integer> hasPermissionIdList = rolePermissionService
                     .getPermissionIdListByRoleIdList(notAdminIdLists);
                 // 构建权限树
