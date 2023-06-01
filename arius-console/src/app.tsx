@@ -74,9 +74,41 @@ const App = () => {
   const [siderMenuCollapsed, setSiderMenuCollapsed] = React.useState(initCollapsed === "true");
   const [removePath, setRemovePaths] = useGlobalPathStatus();
   const [loginStatus] = useGlobalLoginStatus();
+  let systemList = {
+    1623: "/scheduling/task", // 任务列表  1623
+    1625: "/scheduling/log", // 调度日志  1625
+    1633: "/system/config", // 1 平台配置  1633
+    1635: "/system/operation", // 1 操作记录  1635
+    1621: "/work-order/task", // 1 任务中心 1621
+    1619: "/work-order/my-approval", // 工单任务 我的审批 1619
+    1627: "/system/user", // 用户管理  1627
+    1629: "/system/role", // 角色管理  1629
+    1631: "/system/project", // 应用管理  1631
+    1883: "/software/script-center", // 脚本中心  1883
+    1885: "/software/software-center", // 软件中心  1885
+  };
+  const getRoutePath = (powerList) => {
+    const list = [];
+    if (powerList.includes("1631")) {
+      return systemList[1631];
+    } else {
+      powerList.map((item) => {
+        if (Object.keys(systemList).includes(item.toString())) {
+          list.push(item);
+        }
+      });
+      return systemList[list[0]];
+    }
+  };
   const setHeaderClick = (key, props: any) => {
+    const powerIdList =[] 
+    store.getState().user.permissionTree.map(item =>{
+      if(item.has && item.id ){
+        powerIdList.push(item.id) 
+      }
+    })
     if (currentLeftIndex(isSuperApp()) !== key) {
-      props.history.push(key ? "/system/project" : isSuperApp() ? "/dashboard" : "/cluster/logic");
+      props.history.push(key ? getRoutePath(powerIdList) : isSuperApp() ? "/dashboard" : "/cluster/logic");
     }
   };
 
@@ -118,7 +150,6 @@ const App = () => {
     setCurrentProject(value);
     setProjectInfo(value);
     setLeftIndex(0);
-    console.log(isSuperApp());
     props.history.push(isSuperApp() ? "/dashboard" : "/cluster/logic");
   };
 
