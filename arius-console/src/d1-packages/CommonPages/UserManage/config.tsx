@@ -1,10 +1,11 @@
 import * as React from "react";
 import { formatDate } from "knowdesign/lib/utils/tools";
 import { renderAttributes } from "container/custom-component";
-import { Input, InputNumber, Select, Button, Tooltip, Form, message, } from "antd";
+import { Input, InputNumber, Select, Button, Tooltip, Form } from "antd";
 import { regChecCode, regUserPassword } from "constants/reg";
 import { checkRegisterUser, updateUserInfo } from "api/logi-security";
 import { CloseOutlined } from "@ant-design/icons";
+import { XNotification } from "component/x-notification";
 export interface ITableBtn {
   clickFunc?: () => void;
   type?: string;
@@ -179,19 +180,18 @@ export const readableForm = [
       };
 
       const description = () => {
-        const onFinish = async ({ pw }) => {
+        const onFinish =  ({ pw }) => {
           const req = {
             userName,
             pw,
             ignorePasswordMatching: true,
           };
-          const { res } = await updateUserInfo(req);
-          if (res.code === 0) {
-            message.success("重置成功");
-          } else {
-            message.error("重置失败");
-          }
-          cancelSbm();
+          updateUserInfo(req).then(() => {
+            XNotification({ type: "success", message: "重置成功", duration: 1.5 });
+            cancelSbm();
+          }).catch(()=>{
+            XNotification({ type: "warning", message: "重置失败", duration: 1.5 });
+          });
         };
 
         const cancelSbm = () => {
