@@ -63,7 +63,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.didi.arius.gateway.common.consts.QueryConsts;
-import com.didi.arius.gateway.core.service.InboundConnectionLimitService;
 import com.didiglobal.knowframework.log.ILog;
 import com.didiglobal.knowframework.log.LogFactory;
 
@@ -149,9 +148,7 @@ public class NettyHttpServerTransport {
     
     @Autowired
     private NettyHttpController nettyHttpController;
-    
-    @Autowired
-    protected InboundConnectionLimitService inboundConnectionLimitService;
+
     public NettyHttpServerTransport() {
         // pass
     }
@@ -348,11 +345,9 @@ public class NettyHttpServerTransport {
     
         protected final NettyHttpServerTransport transport;
         protected final HttpRequestHandler       requestHandler;
-        protected final InboundConnectionHandler inboundConnectionHandler;
         public HttpChannelPipelineFactory(NettyHttpServerTransport transport, boolean detailedErrorsEnabled) {
             this.transport = transport;
             this.requestHandler = new HttpRequestHandler(transport, detailedErrorsEnabled);
-            this.inboundConnectionHandler = new InboundConnectionHandler(transport.inboundConnectionLimitService);
         }
 
         @Override

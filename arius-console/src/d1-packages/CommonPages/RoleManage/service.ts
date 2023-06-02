@@ -56,6 +56,10 @@ export const queryPermissionTree = () => {
 export const getRolePermission = (): any => {
   return request(`${esPrefix}${logiPrefix}/permission/resource-owner`, { headers: getHeaders() });
 };
+// 获取资源admin角色权限树
+export const getaAdminPermission = (): any => {
+  return request(`${esPrefix}${logiPrefix}/permission/resource-admin`, { headers: getHeaders() });
+};
 
 // 从角色中删除该角色下的用户
 export const deleteUserByRoleId = (id: number, userId: number) => {

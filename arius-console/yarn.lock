@@ -1333,10 +1333,10 @@
     "@ant-design/icons" "^4.7.0"
     react "16.12.0"
 
-"@knowdesign/kbn-sense@1.1.1":
-  version "1.1.1"
-  resolved "https://registry.npmmirror.com/@knowdesign/kbn-sense/-/kbn-sense-1.1.1.tgz#acb0d8717fb378e50a14df43fb29e4a24521bdd4"
-  integrity sha512-RFihcNfFN+zfqQUAZ9GmMFr8zpgUwNRUTEE+wnTkXoIjXtA8SZmknM/YnSYf0LidlO6eJy2k6iGfE4nIXDsUxA==
+"@knowdesign/kbn-sense@^1.1.2":
+  version "1.1.2"
+  resolved "http://registry.qizhidao.net/@knowdesign%2fkbn-sense/-/kbn-sense-1.1.2.tgz#a3b89bff3a0189a44f56667a54d913464ed673a5"
+  integrity sha512-CJfsSM4eUDPVgo3yEZXTx2jznZcWi5OG1MKwe28QPiwBk/WN+UJhP/tMshPi3PqLDhaIkUDCcpeMHOk1Y6X9rA==
   dependencies:
     "@babel/core" "^7.16.7"
     "@babel/runtime" "^7.12.5"

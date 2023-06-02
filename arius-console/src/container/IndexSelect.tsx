@@ -66,3 +66,70 @@ export const IndexSelect = forwardRef((props: any, ref) => {
     </Select>
   );
 });
+export const IndexSelect2 = forwardRef((props: any, ref) => {
+  const [value, setValue] = useState();
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    getIndexList();
+  }, [props.currentCluster?.id]);
+
+  const getIndexList = async (index?: string) => {
+    const superApp = isSuperApp();
+    const indexNameList = await (superApp
+      ? getPhyIndexNameList(props.currentCluster?.id)
+      : getLogicIndexNameList(props.currentCluster?.id));
+
+    setValue(indexNameList?.[0] || null);
+    setList(indexNameList);
+    props.resetProfile();
+    props.setBtnDisabled(!indexNameList.length);
+    if (indexNameList.length) {
+      getIndexDsl(indexNameList[0]);
+    }
+  };
+
+  const getIndexDsl = (indexName) => {
+    getDslByIndex(indexName).then((res) => {
+      let editorInstance = props.getEditorInstance();
+
+      let dsl = "";
+      try {
+        dsl = JSON.parse(res)?.dsl;
+        dsl = JSON.stringify(JSON.parse(dsl), null, 4);
+      } catch (err) {}
+
+      editorInstance?.setValue && editorInstance.setValue(dsl);
+    });
+  };
+
+  const onChange = (index: any) => {
+    const output = index.slice(-1);
+    setValue(output);
+    getIndexDsl(output);
+  };
+
+  const handleSearch = debounce((newValue: string) => {
+    getIndexList(newValue);
+  }, 200);
+
+  useImperativeHandle(ref, () => ({
+    value,
+  }));
+
+  return (
+    <Select
+      showSearch
+      value={value}
+      onChange={onChange}
+      placeholder="请选择索引"
+      mode="tags"
+    >
+      {list?.map((item: any) => (
+        <Select.Option value={item} key={uuid()}>
+          {item}
+        </Select.Option>
+      ))}
+    </Select>
+  );
+});

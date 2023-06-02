@@ -137,7 +137,7 @@ public abstract class BaseHttpRestController implements IRestHandler {
             // Process the request
             checkToken(queryContext);
 
-            checkConnectionLimitAndBindConnection2App(queryContext);
+            //checkConnectionLimitAndBindConnection2App(queryContext);
 
             preRequest(queryContext);
 

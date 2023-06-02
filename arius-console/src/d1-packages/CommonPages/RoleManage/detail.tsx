@@ -1,7 +1,7 @@
-import React, { useState, useEffect, FC, useRef } from "react";
-import { Button, message, Drawer, Form, Input, Row, Col, Transfer, Checkbox, Descriptions } from "antd";
+import React, { useState, useEffect, useRef } from "react";
+import { Button, message, Drawer, Form, Input, Row, Col, Select } from "antd";
 import { readableForm } from "./config";
-import { queryRoleDetail, createOrUpdateRole, assignRole, queryPermissionTree, getRolePermission } from "./service";
+import { queryRoleDetail, createOrUpdateRole, assignRole, getRolePermission, getaAdminPermission} from "./service";
 import "./detail.less";
 import PermissionTree from "./PermissionTree";
 import BindUser from "./BindUser";
@@ -31,7 +31,8 @@ export default function Detail(props: any) {
 
   const permissionRef: any = React.createRef();
   const currentSelectUser = useRef([]);
-
+  const [roleType, setroleType] = useState(0);
+  const [ dataList, setDataList] = useState([]);
   const onSubmit = () => {
     if (flag === "assign") {
       handleAssign();
@@ -88,7 +89,7 @@ export default function Detail(props: any) {
               id: roleId,
               permissionIdList,
             };
-
+        params.roleType = roleType
         setSubmitLoading(true);
         createOrUpdateRole(isCreate, params)
           .then(() => {
@@ -132,17 +133,17 @@ export default function Detail(props: any) {
             isCheckAll: item.childList.every((subItem) => subItem.has),
           };
         });
-
       if (flag !== "update") {
         setDetailData(res);
       } else {
         form.setFieldsValue(res);
+        setroleType(res.roleType)
         // 编辑权限点时展示所有权限点
-        const roleList: any = await getRolePermission();
+        const roleList: any = res.roleType === 1 ? await getaAdminPermission() : await getRolePermission();
+        // const roleList: any =   await getRolePermission();
 
         // roleList?.childList 中has表示该角色是否能展示权限点
         const renderRoleList = (roleList?.childList || []).filter((item) => item.has);
-
         for (let item of renderRoleList) {
           // permissionVoData中has表示该权限点是否生效
           item.childList = (item.childList || []).filter((row) => row.has);
@@ -161,10 +162,13 @@ export default function Detail(props: any) {
         }
         permissionVoData = renderRoleList;
       }
+
+      // let permission2 = (res.permissionTreeVO.childList || []).map((item) => { return {...item } });
+      // setPermissionVo(res.roleType === 1 && flag === "update"? permission2 : permissionVoData);
       setPermissionVo(permissionVoData);
       setLoading(false);
     } catch (err) {
-      setLoading(false);
+      setLoading(false); 
     }
   };
 
@@ -206,9 +210,31 @@ export default function Detail(props: any) {
   };
 
   const renderEditableCol = () => {
+    const handleChange =  async (val) => {
+      setroleType(val) 
+      if (val === 1){
+        const data = await queryRoleDetail(val) 
+        setDataList(data.permissionTreeVO.childList)
+      }
+    };
+    
     return (
       <Form layout="vertical" form={form}>
         <Row>
+        <Col span={24}>
+            <Form.Item label="角色类型" name="roleType">
+              <Select
+                defaultValue={roleType}
+                style={{ width: 160 }}
+                onChange={handleChange}
+                disabled={ flag === "update"}
+                options={[
+                  { value: 0, label: "资源owner" },
+                  { value: 1, label: "管理员" },
+                ]}
+              />
+            </Form.Item>
+          </Col>
           <Col span={24}>
             <Form.Item
               label="角色名称"
@@ -248,7 +274,6 @@ export default function Detail(props: any) {
                     if (value && value.length > 100) {
                       return Promise.reject("请输入描述，支持1-100个字符");
                     }
-
                     return Promise.resolve();
                   },
                 },
@@ -272,7 +297,7 @@ export default function Detail(props: any) {
 
   const renderContent = () => {
     // 编辑权限点不做过滤，查看详情和新建角色过滤掉不可展示的权限点
-    const permissionData = flag === "detail" || flag === "create" ? filterPermission(permissionVo) : permissionVo;
+    let permissionData = flag === "detail" || flag === "create" ? filterPermission(roleType === 1 ? dataList: permissionVo) : permissionVo;
     return (
       <PermissionTree
         ref={permissionRef}
@@ -335,7 +360,7 @@ export default function Detail(props: any) {
       permissionRef.current = null;
       currentSelectUser.current = null;
     };
-  }, []);
+  }, [roleType]);
 
   return (
     <Drawer

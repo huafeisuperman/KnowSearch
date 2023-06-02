@@ -15,8 +15,14 @@ export const regTemplateName = /^[a-z0-9\._-]*$/; // 仅支持小写字母、数
 export const regIp =
   /^(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.((1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.){2}(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)$/; // ip
 
-export const regUserPassword = /^[A-Za-z0-9_\-!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~]*$/;
+export const regUserPassword =
+  /^[A-Za-z0-9_\-!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~]*$/;
 
-export const regPort = /^((6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])|[0-5]?\d{0,4})$/g; // port
+export const regPort =
+  /^((6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])|[0-5]?\d{0,4})$/g; // port
 
-export const regRegionName = /^[\u4e00-\u9fa5_a-zA-Z0-9_-]+$/; // 支持文字，字母，数字，下划线，中划线
+export const regRegionName = /^[\u4e00-\u9fa5_a-zA-Z0-9_-]+$/; // 支持文字，字母，数字，下划线，中划线.
+
+export const regEsUser = /^[a-zA-Z][\w]{0,31}$/; // 支持大/小写字母、数字、下划线，已字母开头，1-32位字符
+
+export const regChecCode = /^[\u4e00-\u9fa5a-zA-Z0-9\S]{6,128}$/; // 支持大/小写字母、数字、下划线，已字母开头，1-32位字符

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { getTableCol, getFormCol, getFormText } from "./config";
-import { DTable } from "../../dantd/DTable";
+import { getTableCol, getFormCol } from "./config";
 import { RenderTitle } from "../RenderTitle";
-import QueryForm from "../../ProForm/QueryForm";
-import { queryUserList, queryDeptTreeData, queryRoleListByName, deleteUser } from "./service";
-import { Modal, TreeSelect, message } from "antd";
+import {
+  queryUserList,
+  queryDeptTreeData,
+  queryRoleListByName,
+  deleteUser,
+} from "./service";
+import { Button, Modal, TreeSelect, message, Drawer } from "antd";
 import { renderTableOpts } from "../../ProTable/RenderTableOpts";
 import Detail from "./detail";
 const { TreeNode } = TreeSelect;
@@ -12,6 +15,8 @@ import Progress from "../../CommonComponents/ProgressBar";
 import { hasOpPermission } from "lib/permission";
 import { UserPermissions } from "constants/permission";
 import { ProTable } from "knowdesign";
+import { RegAddForm } from "./addUser";
+import "./index.less";
 
 export const UserManage = () => {
   const [flag, setFlag] = useState("");
@@ -36,14 +41,20 @@ export const UserManage = () => {
   const getOperationList = (row: any) => {
     return [
       {
-        invisible: !hasOpPermission(UserPermissions.PAGE, UserPermissions.ASSGIN),
+        invisible: !hasOpPermission(
+          UserPermissions.PAGE,
+          UserPermissions.ASSGIN
+        ),
         label: "分配角色",
         clickFunc: () => {
           handleAssignRole(row);
         },
       },
       {
-        invisible: !hasOpPermission(UserPermissions.PAGE, UserPermissions.ASSGIN),
+        invisible: !hasOpPermission(
+          UserPermissions.PAGE,
+          UserPermissions.ASSGIN
+        ),
         label: "删除",
         clickFunc: () => {
           if (row.singleOwnerOfProjects?.length) {
@@ -51,7 +62,9 @@ export const UserManage = () => {
               title: "提示",
               content: (
                 <>
-                  <div>此用户是以下应用的唯一责任人，删除用户前需下线应用：</div>
+                  <div>
+                    此用户是以下应用的唯一责任人，删除用户前需下线应用：
+                  </div>
                   <div>{row.singleOwnerOfProjects.join("、")}</div>
                 </>
               ),
@@ -145,7 +158,10 @@ export const UserManage = () => {
 
   const fetchRoleList = async (val?) => {
     const res: any = await queryRoleListByName(val);
-    const roleList = res.map((item) => ({ value: item.id, title: item.roleName }));
+    const roleList = res.map((item) => ({
+      value: item.id,
+      title: item.roleName,
+    }));
     setRoleList(roleList);
   };
 
@@ -164,7 +180,9 @@ export const UserManage = () => {
       list.length > 0 &&
       list.map((item: any) => (
         <TreeNode key={item.id} value={item.id} title={item.deptName}>
-          {item.childList && item.childList.length > 0 && renderDeptTree(item.childList)}
+          {item.childList &&
+            item.childList.length > 0 &&
+            renderDeptTree(item.childList)}
         </TreeNode>
       ))
     );
@@ -238,6 +256,22 @@ export const UserManage = () => {
     closeDetail();
     fetchUserList();
   };
+  const [open, setOpen] = useState(false);
+  const addUser = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
+  const getJsxElement = () => {
+    return (
+      <>
+        <Button type="primary" onClick={addUser}>
+          新建用户
+        </Button>
+      </>
+    );
+  };
 
   React.useEffect(() => {
     fetchUserList({ current: 1, pageSize: pagination.pageSize });
@@ -253,6 +287,7 @@ export const UserManage = () => {
           // onChange={() => null}
           onReset: handleSubmit,
           onSearch: handleSubmit,
+
           isResetClearAll: true,
           initialValues: formData,
         }}
@@ -265,6 +300,7 @@ export const UserManage = () => {
           columns: getTableCol(renderIndex, renderUserNameCol, renderOptCol),
           paginationProps: { ...pagination, onChange: onChangePagination },
           customRenderSearch: () => <RenderTitle {...renderTitleContent()} />,
+          getJsxElement: () => getJsxElement(),
         }}
       />
       {detailVisible ? (
@@ -277,6 +313,17 @@ export const UserManage = () => {
           submitCb={submitCb}
         />
       ) : null}
+      <Drawer
+        title="新建用户"
+        placement="right"
+        width="500"
+        destroyOnClose={true}
+        className="add-user-drawer"
+        onClose={onClose}
+        visible={open}
+      >
+        <RegAddForm fn={onClose} />
+      </Drawer>
     </div>
   );
 };

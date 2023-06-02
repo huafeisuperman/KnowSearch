@@ -2,13 +2,33 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import * as actions from "../../../actions";
-import { Button, Drawer, message, Modal, Select, Table, Tooltip, Input, Form, Switch } from "antd";
+import {
+  Button,
+  Drawer,
+  message,
+  Modal,
+  Select,
+  Table,
+  Tooltip,
+  Input,
+  Form,
+  Switch,
+} from "antd";
 import { SEARCH_TYPE_MAP } from "container/ProjectManager/config";
-import { createAppByProjectId, deleteOneAppByProjectId, getAppByProjectId, updateAppByProjectId } from "api";
-import { getEsUserPrimitiveList, getEsUserList, setDefaultDisplay } from "api/cluster-api";
+import {
+  createAppByProjectId,
+  deleteOneAppByProjectId,
+  getAppByProjectId,
+  updateAppByProjectId,
+} from "api";
+import {
+  getEsUserPrimitiveList,
+  getEsUserList,
+  setDefaultDisplay,
+} from "api/cluster-api";
 import { renderOperationBtns } from "container/custom-component";
 import { filterOption } from "lib/utils";
-import { regNonnegativeInteger } from "constants/reg";
+import { regNonnegativeInteger, regEsUser, regChecCode } from "constants/reg";
 import { XModal } from "component/x-modal";
 import { cellStyle } from "constants/table";
 import { XNotification } from "component/x-notification";
@@ -50,8 +70,14 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
   const getClusterList = async () => {
     let primitive = await getEsUserPrimitiveList(params.id);
     let cluster = await getEsUserList(params.id);
-    let clusterList = (cluster || []).map((item) => ({ value: item, label: item }));
-    let primitiveList = (primitive || []).map((item) => ({ value: item, label: item }));
+    let clusterList = (cluster || []).map((item) => ({
+      value: item,
+      label: item,
+    }));
+    let primitiveList = (primitive || []).map((item) => ({
+      value: item,
+      label: item,
+    }));
     setClusterList(clusterList);
     setPrimitiveList(primitiveList);
   };
@@ -71,6 +97,20 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
         width: 150,
       },
       {
+        title: "ES账号",
+        dataIndex: "username",
+        key: "username",
+        width: 120,
+        render: (val: string) => val || "-",
+      },
+      {
+        title: "ES密码",
+        dataIndex: "password",
+        key: "password",
+        width: 120,
+        render: (val: string) => val || "-",
+      },
+      {
         title: "访问模式",
         dataIndex: "searchType",
         key: "searchType",
@@ -87,7 +127,9 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
         onCell: () => ({
           style: { ...cellStyle, maxWidth: 150 },
         }),
-        render: (val: string) => <Tooltip title={val || "-"}>{val || "-"}</Tooltip>,
+        render: (val: string) => (
+          <Tooltip title={val || "-"}>{val || "-"}</Tooltip>
+        ),
       },
       {
         title: "应用默认的ES_User",
@@ -138,19 +180,27 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
                 }
                 Modal.confirm({
                   title: `确认删除ES_User ${record.id}？`,
-                  content: <span style={{ color: "red" }}>请确认影响后再进行删除操作！</span>,
+                  content: (
+                    <span style={{ color: "red" }}>
+                      请确认影响后再进行删除操作！
+                    </span>
+                  ),
                   onOk: () => {
-                    deleteOneAppByProjectId(params.id, record.id).then((res) => {
-                      message.success("删除成功");
-                      getData();
-                    });
+                    deleteOneAppByProjectId(params.id, record.id).then(
+                      (res) => {
+                        message.success("删除成功");
+                        getData();
+                      }
+                    );
                   },
                 });
               },
               label:
                 list.length === 1 ? (
                   <Tooltip title="至少保留一条ES_User">
-                    <span style={{ color: "gray", cursor: "not-allowed" }}>删除</span>
+                    <span style={{ color: "gray", cursor: "not-allowed" }}>
+                      删除
+                    </span>
                   </Tooltip>
                 ) : (
                   <span>删除</span>
@@ -171,16 +221,29 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
     setSearchType(searchType);
     if (searchType === 0 && !clusterList.length) {
       form.setFieldsValue({ selectCluster: undefined });
-      XNotification({ type: "error", message: `该应用下无可用集群，无法新增集群模式的ES_User` });
+      XNotification({
+        type: "error",
+        message: `该应用下无可用集群，无法新增集群模式的ES_User`,
+      });
       return;
     } else if (searchType === 2 && !primitiveList.length) {
       form.setFieldsValue({ selectCluster: undefined });
-      XNotification({ type: "error", message: `该应用下无独立类型集群，无法新增原生模式的ES_User` });
+      XNotification({
+        type: "error",
+        message: `该应用下无独立类型集群，无法新增原生模式的ES_User`,
+      });
       return;
     }
     opType.current === "add"
-      ? form.setFieldsValue({ selectCluster: searchType === 0 ? clusterList?.[0]?.value : primitiveList?.[0]?.value || undefined })
-      : form.setFieldsValue({ selectCluster: currentRecord?.current?.cluster || undefined });
+      ? form.setFieldsValue({
+          selectCluster:
+            searchType === 0
+              ? clusterList?.[0]?.value
+              : primitiveList?.[0]?.value || undefined,
+        })
+      : form.setFieldsValue({
+          selectCluster: currentRecord?.current?.cluster || undefined,
+        });
   };
 
   const onClickAddOrEdit = (type: string, record?: any) => {
@@ -205,21 +268,28 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
 
   const onModalSubmit = (result) => {
     if (opType.current === "edit") {
-      updateAppByProjectId({
+      const editData = {
         projectId: params.id,
         id: currentRecord.current.id,
         searchType: result.searchType,
         queryThreshold: result.queryThreshold,
         cluster: searchType !== 1 ? result.selectCluster : undefined,
-      }).then((res) => {
+        username: result.username,
+        password: result.password,
+      };
+
+      updateAppByProjectId(editData).then((res) => {
         getData();
       });
     } else {
-      createAppByProjectId(params.id, {
+      const addData = {
         searchType: result.searchType,
         queryThreshold: result.queryThreshold,
         cluster: searchType !== 1 ? result.selectCluster : undefined,
-      }).then(() => {
+        username: result.username,
+        password: result.password,
+      };
+      createAppByProjectId(params.id, addData).then(() => {
         getData();
       });
     }
@@ -228,13 +298,18 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
 
   return (
     <>
-      <Drawer onClose={onCancel} width={800} visible={true} title="访问设置">
+      <Drawer onClose={onCancel} width={1040} visible={true} title="访问设置">
         <div className="add-esuser">
           <Button onClick={() => onClickAddOrEdit("add")} type="primary">
             新建ES_User
           </Button>
         </div>
-        <Table rowKey="id" columns={getColumns(list)} dataSource={list} scroll={{ x: "max-content" }} />
+        <Table
+          rowKey="id"
+          columns={getColumns(list)}
+          dataSource={list}
+          scroll={{ x: "max-content" }}
+        />
       </Drawer>
       {modalVisible && (
         <Modal
@@ -245,7 +320,12 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
           onCancel={() => setModalVisible(!modalVisible)}
           destroyOnClose
         >
-          <Form labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} form={form} onFinish={onModalSubmit}>
+          <Form
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 15 }}
+            form={form}
+            onFinish={onModalSubmit}
+          >
             <Form.Item name="searchType" label="访问模式">
               <Select
                 showSearch
@@ -255,13 +335,67 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
                 onChange={onSearchTypeChange}
               ></Select>
             </Form.Item>
+            {searchType === 2 && (
+              <>
+                <Form.Item
+                  name="username"
+                  label="ES账号"
+                  rules={[
+                    {
+                      required: true,
+                      message:
+                        "请输入正确ES账号，以字母开头，支持大/小写字母、数字、下划线，1-32位字符",
+                    },
+                    {
+                      validator: (rule: any, value: string) => {
+                        if (value && !new RegExp(regEsUser).test(value)) {
+                          return Promise.reject(
+                            new Error(
+                              "请输入正确ES账号，以字母开头，支持大/小写字母、数字、下划线，1-32位字符"
+                            )
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <Input placeholder="请输入ES账号" />
+                </Form.Item>
+                <Form.Item
+                  name="password"
+                  label="ES密码"
+                  rules={[
+                    {
+                      required: true,
+                      message:
+                        "请输入正确ES密码，支持中英文字母、数字、标点符号（除空格），6-128位字符",
+                    },
+                    {
+                      validator: (rule: any, value: string) => {
+                        if (value && !new RegExp(regChecCode).test(value)) {
+                          return Promise.reject(
+                            new Error(
+                              "请输入正确ES密码，支持中英文字母、数字、标点符号（除空格），6-128位字符"
+                            )
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <Input placeholder="请输入ES密码" />
+                </Form.Item>
+              </>
+            )}
             {searchType !== 1 && (
               <Form.Item name="selectCluster" label="访问集群">
                 <Select
                   showSearch
                   filterOption={filterOption}
                   placeholder="请选择"
-                  options={searchType === 0 ? clusterList : primitiveList}
+                  options={searchType === 1 ? primitiveList : clusterList}
                 ></Select>
               </Form.Item>
             )}
@@ -270,11 +404,20 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
                 name="queryThreshold"
                 label="查询限流值"
                 rules={[
-                  { required: true, message: "请输入查询限流值，支持1-16个数字字符" },
+                  {
+                    required: true,
+                    message: "请输入查询限流值，支持1-16个数字字符",
+                  },
                   {
                     validator: (rule: any, value: string) => {
-                      if ((value && !new RegExp(regNonnegativeInteger).test(value)) || value?.length > 16) {
-                        return Promise.reject(new Error("请输入查询限流值，支持1-16个数字字符"));
+                      if (
+                        (value &&
+                          !new RegExp(regNonnegativeInteger).test(value)) ||
+                        value?.length > 16
+                      ) {
+                        return Promise.reject(
+                          new Error("请输入查询限流值，支持1-16个数字字符")
+                        );
                       }
                       return Promise.resolve();
                     },
@@ -287,7 +430,10 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
             </div>
             <div className="footer">
               <Form.Item>
-                <Button className="cancel" onClick={() => setModalVisible(!modalVisible)}>
+                <Button
+                  className="cancel"
+                  onClick={() => setModalVisible(!modalVisible)}
+                >
                   取消
                 </Button>
                 <Button type="primary" htmlType="submit">
