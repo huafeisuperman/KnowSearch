@@ -1,15 +1,20 @@
 package com.didi.arius.gateway.elasticsearch.client.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.didi.arius.gateway.common.utils.CommonUtil;
+import com.didiglobal.knowframework.log.ILog;
+import com.didiglobal.knowframework.log.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.elasticsearch.action.ActionRequest;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 public abstract class ESActionRequest<T extends ESActionRequest> extends ActionRequest {
+    protected static final ILog logger = LogFactory.getLog(ESActionRequest.class);
+
     protected ESActionRequest() {
         super();
     }
@@ -32,6 +37,10 @@ public abstract class ESActionRequest<T extends ESActionRequest> extends ActionR
                     //为了接入带认证es集群，这个判断会使action下传的Auth失效,直接使用client的Auth
                     continue;
                 }*/
+                if (Objects.isNull(entry.getValue())) {
+                    logger.warn("header value is empty, key = {}", entry.getKey());
+                    continue;
+                }
                 Header header = new BasicHeader(entry.getKey(), entry.getValue().toString());
                 newHeaders.add(header);
             }
