@@ -144,7 +144,7 @@ export const NodeView = memo(() => {
   const getAsyncNodeViewData = useCallback(
     async (metricsTypes) => {
       const values = (selectRadioValue.current.content || []).map((item) => {
-        return item.split("_")?.[1];
+        return item.split('_').slice(1).join('_')
       });
       let content = flag && Url().search?.node ? [Url().search?.node] : values;
 

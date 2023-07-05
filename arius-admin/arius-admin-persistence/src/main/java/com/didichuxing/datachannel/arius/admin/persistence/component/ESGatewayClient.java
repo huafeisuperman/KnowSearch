@@ -622,7 +622,14 @@ public class ESGatewayClient {
         if (StringUtils.isNotBlank(preference)) {
             builder = builder.preference(preference);
         }
-        esQueryResponse = builder.execute().actionGet(120, TimeUnit.SECONDS);
+        try {
+            esQueryResponse = builder.execute().actionGet(120, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            LOGGER.error(
+                    "class=ESGatewayClient||method=prepareScrollQuery||clusterName={}||indexName={}||typeName={}||clzz={}||queryDsl={}||stack={}",
+                    clusterName, indexName, typeName, clzz, queryDsl, e);
+            throw e;
+        }
 
         if (esQueryResponse == null) {
             return null;

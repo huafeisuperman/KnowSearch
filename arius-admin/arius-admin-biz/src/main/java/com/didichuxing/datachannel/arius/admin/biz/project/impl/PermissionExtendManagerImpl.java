@@ -32,4 +32,16 @@ public class PermissionExtendManagerImpl implements PermissionExtendManager {
         return Result.buildSucc(permissionTreeVO);
     }
 
+    /**
+     * 建立资源admin角色权限树
+     *
+     * @return {@code Result<PermissionTreeVO>}
+     */
+    @Override
+    public Result<PermissionTreeVO> buildPermissionTreeByResourceAdmin() {
+        final PermissionTreeVO permissionTreeVO = permissionService
+                .buildPermissionTreeByRoleId(AuthConstant.ADMIN_ROLE_ID);
+        return Result.buildSucc(permissionTreeVO);
+    }
+
 }

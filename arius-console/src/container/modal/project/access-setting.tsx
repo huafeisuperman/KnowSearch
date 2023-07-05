@@ -395,7 +395,7 @@ const AccessSetting = (props: { dispatch: any; cb: any; params: any }) => {
                   showSearch
                   filterOption={filterOption}
                   placeholder="请选择"
-                  options={searchType === 0 ? clusterList : primitiveList}
+                  options={searchType === 1 ? primitiveList : clusterList}
                 ></Select>
               </Form.Item>
             )}

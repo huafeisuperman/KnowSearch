@@ -271,7 +271,10 @@ public abstract class HttpRestHandler extends ESBase {
         directRequest.setParams(paramsMap);
 
         directRequest.putHeader("requestId", queryContext.getRequestId());
-        directRequest.putHeader("Authorization", queryContext.getRequest().getHeader("Authorization"));
+        Object authorization = queryContext.getRequest().getHeader("Authorization");
+        if (authorization != null) {
+            directRequest.putHeader("Authorization", authorization);
+        }
         return directRequest;
     }
 

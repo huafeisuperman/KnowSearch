@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.didichuxing.datachannel.arius.admin.core.component.RoleTool;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,8 @@ public class RoleExtendManagerImpl implements RoleExtendManager {
     private ProjectService       projectService;
     @Autowired
     private UserService          userService;
+    @Autowired
+    private RoleTool             roleTool;
 
     /**
      * @param id
@@ -137,7 +140,7 @@ public class RoleExtendManagerImpl implements RoleExtendManager {
         try {
             roleService.deleteUserFromRole(roleId, userId, request);
             //如果改角色为超级管理员、那么需要一并删除超级项目的管理能力
-            if (AuthConstant.ADMIN_ROLE_ID.equals(roleId)) {
+            if (roleTool.isAdminByRoleId(Collections.singletonList(roleId))) {
                 userProjectService.delOwnerProject(AuthConstant.SUPER_PROJECT_ID, Collections.singletonList(userId));
                 userProjectService.delUserProject(AuthConstant.SUPER_PROJECT_ID, Collections.singletonList(userId));
             }

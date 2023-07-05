@@ -25,11 +25,17 @@ public class ESUserDTO extends BaseDTO {
     @ApiModelProperty("root用户")
     private Integer isRoot = 0;
 
+    @ApiModelProperty("es集群用户名")
+    private String username;
+
+    @ApiModelProperty("es集群用户密码")
+    private String password;
+
     @ApiModelProperty("验证码")
-    private String  verifyCode;
+    private String verifyCode;
 
     @ApiModelProperty("备注")
-    private String  memo;
+    private String memo;
 
     @ApiModelProperty("删除标记（1:正常；0：删除）")
     private Integer isActive;
@@ -38,7 +44,7 @@ public class ESUserDTO extends BaseDTO {
     private Integer queryThreshold;
 
     @ApiModelProperty("查询集群")
-    private String  cluster;
+    private String cluster;
 
     @ApiModelProperty("查询模式（0:集群模式；1:索引模式）")
     private Integer searchType;

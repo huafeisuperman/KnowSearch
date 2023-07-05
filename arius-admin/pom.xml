@@ -42,7 +42,7 @@
         <json-patch.version>1.13</json-patch.version>
         <kf-log.version>2.0.4</kf-log.version>
         <kf-elasticsearch-client.version>1.0.1</kf-elasticsearch-client.version>
-        <kf-security.version>1.0.2</kf-security.version>
+        <kf-security.version>1.0.2-qzd</kf-security.version>
         <kf-job.version>2.0.2</kf-job.version>
     </properties>
 

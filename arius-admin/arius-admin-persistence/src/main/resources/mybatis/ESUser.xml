@@ -10,6 +10,8 @@
 		<result column="is_root" jdbcType="TINYINT" property="isRoot"/>
 		<result column="memo" jdbcType="VARCHAR" property="memo"/>
 		<result column="ip" jdbcType="VARCHAR" property="ip"/>
+		<result column="username" jdbcType="VARCHAR" property="username"/>
+		<result column="password" jdbcType="VARCHAR" property="password"/>
 		<result column="verify_code" jdbcType="VARCHAR" property="verifyCode"/>
 		<result column="is_active" jdbcType="TINYINT" property="isActive"/>
 		<result column="query_threshold" jdbcType="INTEGER" property="queryThreshold"/>
@@ -27,6 +29,8 @@
 		is_root,
 		memo,
 		query_threshold,
+		username,
+		password,
 		verify_code,
 		cluster,
 		is_active,
@@ -84,10 +88,10 @@
 	        useGeneratedKeys="true" keyColumn="id" keyProperty="id">
 		<!--@mbg.generated-->
 		insert into arius_es_user
-		( is_root, memo, query_threshold, verify_code, cluster,  search_type, data_center, project_id,
-		 is_default_display)
-		values ( #{isRoot}, #{memo}, #{queryThreshold}, #{verifyCode}, #{cluster}, #{searchType},
-		        #{dataCenter}, #{projectId}, #{defaultDisplay})
+		( is_root, memo, query_threshold, username, password, verify_code, cluster,  search_type, data_center,
+		project_id, is_default_display)
+		values ( #{isRoot}, #{memo}, #{queryThreshold}, #{username}, #{password}, #{verifyCode}, #{cluster},
+		#{searchType}, #{dataCenter}, #{projectId}, #{defaultDisplay})
 	</insert>
 	
 	<select id="getByESUser" parameterType="integer" resultMap="BaseResultMap">
@@ -126,6 +130,12 @@
 			</if>
 			<if test="queryThreshold != null">
 				, query_threshold = #{queryThreshold}
+			</if>
+			<if test="username != null">
+				, username = #{username}
+			</if>
+			<if test="password != null">
+				, password = #{password}
 			</if>
 			<if test="verifyCode != null">
 				, verify_code = #{verifyCode}

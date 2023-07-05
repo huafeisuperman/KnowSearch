@@ -20,6 +20,11 @@ public final class AuthConstant {
      * 管理角色id
      */
     public static final Integer ADMIN_ROLE_ID                        = 1;
+
+    /**
+     * 管理角色类型
+     */
+    public static final Integer ADMIN_ROLE_TYPE                      = 1;
     /**
      * 资源own role 角色id
      */
