@@ -132,10 +132,17 @@ class FlatObjectFieldParser {
                 + " Offending key: [" + key + "].");
         }
         String keyedValue = createKeyedValue(key, value);
+        String allValue = null;
+        if (currentName.equals("patentIsRemoved") || currentName.equals("isRemoved")) {
+            allValue = "all." + currentName + SEPARATOR + value;
+        }
 
         if (fieldType.indexOptions() != IndexOptions.NONE) {
             fields.add(new StringField(rootFieldName, new BytesRef(value), Field.Store.NO));
             fields.add(new StringField(keyedFieldName, new BytesRef(keyedValue), Field.Store.NO));
+            if (null != allValue) {
+                fields.add(new StringField(keyedFieldName, new BytesRef(allValue), Field.Store.NO));
+            }
         }
 
         if (fieldType.hasDocValues()) {

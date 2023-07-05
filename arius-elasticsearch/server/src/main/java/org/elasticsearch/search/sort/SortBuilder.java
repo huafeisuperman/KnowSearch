@@ -58,7 +58,7 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
     public static final ParseField NESTED_FILTER_FIELD = new ParseField("nested_filter");
     public static final ParseField NESTED_PATH_FIELD = new ParseField("nested_path");
 
-    private static final Map<String, Parser<?>> PARSERS;
+    public static final Map<String, Parser<?>> PARSERS;
     static {
         Map<String, Parser<?>> parsers = new HashMap<>();
         parsers.put(ScriptSortBuilder.NAME, ScriptSortBuilder::fromXContent);
@@ -66,7 +66,8 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
         parsers.put(GeoDistanceSortBuilder.ALTERNATIVE_NAME, GeoDistanceSortBuilder::fromXContent);
         parsers.put(ScoreSortBuilder.NAME, ScoreSortBuilder::fromXContent);
         // FieldSortBuilder gets involved if the user specifies a name that isn't one of these.
-        PARSERS = unmodifiableMap(parsers);
+        //PARSERS = unmodifiableMap(parsers);
+        PARSERS = parsers;
     }
 
     /**
@@ -241,7 +242,7 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
         if (parentQuery != null) {
             if (objectMapper != null) {
                 childQuery = Queries.filtered(childQuery,
-                    new ToChildBlockJoinQuery(parentQuery, context.bitsetFilter(objectMapper.nestedTypeFilter())));
+                        new ToChildBlockJoinQuery(parentQuery, context.bitsetFilter(objectMapper.nestedTypeFilter())));
             }
         }
 
@@ -267,7 +268,7 @@ public abstract class SortBuilder<T extends SortBuilder<T>> implements NamedWrit
     }
 
     @FunctionalInterface
-    private interface Parser<T extends SortBuilder<?>> {
+    public interface Parser<T extends SortBuilder<?>> {
         T fromXContent(XContentParser parser, String elementName) throws IOException;
     }
 

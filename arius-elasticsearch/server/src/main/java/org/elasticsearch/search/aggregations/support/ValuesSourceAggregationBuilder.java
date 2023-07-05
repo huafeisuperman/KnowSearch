@@ -76,7 +76,7 @@ public abstract class ValuesSourceAggregationBuilder<VS extends ValuesSource, AB
     }
 
     private final ValuesSourceType valuesSourceType;
-    private final ValueType targetValueType;
+    public final ValueType targetValueType;
     private String field = null;
     private Script script = null;
     private ValueType valueType = null;
