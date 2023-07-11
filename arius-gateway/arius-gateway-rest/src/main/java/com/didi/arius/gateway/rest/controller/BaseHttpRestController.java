@@ -1,20 +1,5 @@
 package com.didi.arius.gateway.rest.controller;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.rest.*;
-import org.elasticsearch.rest.support.RestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.alibaba.fastjson.JSON;
 import com.didi.arius.gateway.common.connectioncontrl.ConnectionLimitResult;
 import com.didi.arius.gateway.common.consts.QueryConsts;
@@ -48,7 +33,6 @@ import com.didiglobal.knowframework.log.LogFactory;
 import com.didiglobal.knowframework.log.LogGather;
 import com.didiglobal.knowframework.observability.Observability;
 import com.didiglobal.knowframework.observability.common.constant.Constant;
-
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.StatusCode;
@@ -57,6 +41,19 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.context.propagation.TextMapGetter;
 import io.opentelemetry.context.propagation.TextMapPropagator;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.rest.*;
+import org.elasticsearch.rest.support.RestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public abstract class BaseHttpRestController implements IRestHandler {
 
@@ -140,7 +137,7 @@ public abstract class BaseHttpRestController implements IRestHandler {
             // Process the request
             checkToken(queryContext);
 
-            checkConnectionLimitAndBindConnection2App(queryContext);
+            //checkConnectionLimitAndBindConnection2App(queryContext);
 
             preRequest(queryContext);
 
@@ -206,8 +203,14 @@ public abstract class BaseHttpRestController implements IRestHandler {
 
     protected void checkToken(QueryContext queryContext) {
         appService.checkToken(queryContext);
-        String encode = Base64.getEncoder().encodeToString(String.format("%s", "user_" + queryContext.getAppid() + ":" + queryContext.getAppDetail().getVerifyCode()).getBytes(StandardCharsets.UTF_8));
-        queryContext.getRequest().putHeader(AUTHORIZATION, "Basic " + encode);
+//        String encode = Base64.getEncoder().encodeToString(String.format("%s", "user_" + queryContext.getAppid() + ":" + queryContext.getAppDetail().getVerifyCode()).getBytes(StandardCharsets.UTF_8));
+        String username = queryContext.getAppDetail().getUsername();
+        String password = queryContext.getAppDetail().getPassword();
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+            String auth = username + ":" + password;
+            String encode = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
+            queryContext.getRequest().putHeader(AUTHORIZATION, "Basic " + encode);
+        }
     }
 
     protected void checkConnectionLimitAndBindConnection2App(QueryContext queryContext) {

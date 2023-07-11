@@ -55,7 +55,8 @@
          "totalShards",
          "responseLen",
          "isTimedOut",
-         "isTimeOut"
+         "isTimeOut",
+         "dslTemplateMd5"
        ]
      }
 }

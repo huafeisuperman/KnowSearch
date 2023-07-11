@@ -85,7 +85,7 @@ public class DslTemplateController {
     }
 
     @PostMapping("/error/page")
-    @ApiOperation(value = "dsl慢查询分页", notes = "根据指定页获取dsl慢查询列表")
+    @ApiOperation(value = "dsl异常查询分页", notes = "根据指定页获取dsl异常查询列表")
     public PaginationResult<GatewayJoinVO> errorPage(@RequestBody GatewayJoinQueryDTO queryDTO, HttpServletRequest request) throws NotFindSubclassException {
         queryDTO.setTabName(QueryDiagnosisTabNameEnum.ERROR_QUERY.getTabName());
         return gatewayJoinLogManager.getGatewayJoinPage(HttpRequestUtil.getProjectId(request), queryDTO);

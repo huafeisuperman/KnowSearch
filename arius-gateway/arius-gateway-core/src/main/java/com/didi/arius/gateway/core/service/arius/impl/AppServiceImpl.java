@@ -164,6 +164,8 @@ public class AppServiceImpl implements AppService {
             appDetail.setId(appDetailResponse.getId());
             appDetail.setIndexExp(appDetailResponse.getIndexExp() == null ? new ArrayList<>() : appDetailResponse.getIndexExp());
             appDetail.setWindexExp(appDetailResponse.getWindexExp() == null ? new ArrayList<>() : appDetailResponse.getWindexExp());
+            appDetail.setUsername(appDetailResponse.getUsername());
+            appDetail.setPassword(appDetailResponse.getPassword());
             appDetail.setVerifyCode(appDetailResponse.getVerifyCode());
             appDetail.setIp(appDetailResponse.getIp() == null ? new ArrayList<>(): appDetailResponse.getIp());
             appDetail.setCluster(appDetailResponse.getCluster());

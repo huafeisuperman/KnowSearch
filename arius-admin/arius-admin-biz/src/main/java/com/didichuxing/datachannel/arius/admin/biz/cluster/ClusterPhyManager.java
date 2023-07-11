@@ -1,9 +1,5 @@
 package com.didichuxing.datachannel.arius.admin.biz.cluster;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.didichuxing.datachannel.arius.admin.common.bean.common.PaginationResult;
 import com.didichuxing.datachannel.arius.admin.common.bean.common.Result;
 import com.didichuxing.datachannel.arius.admin.common.bean.dto.cluster.*;
@@ -18,6 +14,10 @@ import com.didichuxing.datachannel.arius.admin.common.constant.cluster.ClusterRe
 import com.didichuxing.datachannel.arius.admin.common.exception.ESOperateException;
 import com.didichuxing.datachannel.arius.admin.common.exception.NotFindSubclassException;
 import com.didichuxing.datachannel.arius.admin.common.tuple.TupleThree;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -464,7 +464,7 @@ public interface ClusterPhyManager {
     /**
      * 物理集群绑定 gateway
      * @param clusterPhyId  集群id
-     * @param gatewayClusterId gatewayId
+     * @param bindGatewayClusterIds gatewayIds
      * @param operator 操作人
      * @param projectId 项目id
      */
@@ -505,4 +505,12 @@ public interface ClusterPhyManager {
      * @return {@link Result}<{@link ClusterPhyVO}>
      */
     Result<ClusterPhyVO> getOneById(Integer clusterId);
+
+    /**
+     * 获取物理集群版本列表
+     *
+     * @return {@link Result}<{@link List}<{@link String}>>
+     */
+    Result<List<String>> getClusterVersions();
+
 }

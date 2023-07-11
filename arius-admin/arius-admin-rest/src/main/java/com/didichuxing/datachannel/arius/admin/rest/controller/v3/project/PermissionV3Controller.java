@@ -33,9 +33,17 @@ public class PermissionV3Controller {
     @GetMapping("/resource-owner")
     @ResponseBody
     @ApiOperation(value = "获取资源own角色权限树", notes = "以树的形式返回所有权限")
-    public Result<PermissionTreeVO> isAdmin(HttpServletRequest request) {
+    public Result<PermissionTreeVO> PermissionTreeByResourceOwn(HttpServletRequest request) {
 
         return permissionExtendManager.buildPermissionTreeByResourceOwn();
+    }
+
+    @GetMapping("/resource-admin")
+    @ResponseBody
+    @ApiOperation(value = "获取资源own角色权限树", notes = "以树的形式返回所有权限")
+    public Result<PermissionTreeVO> PermissionTreeByResourceAdmin(HttpServletRequest request) {
+
+        return permissionExtendManager.buildPermissionTreeByResourceAdmin();
     }
 
 }

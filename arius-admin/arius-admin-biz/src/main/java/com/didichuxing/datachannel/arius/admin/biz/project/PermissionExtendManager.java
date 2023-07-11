@@ -17,4 +17,11 @@ public interface PermissionExtendManager {
      */
     Result<PermissionTreeVO> buildPermissionTreeByResourceOwn();
 
+    /**
+     * 建立资源admin角色权限树
+     *
+     * @return {@code Result<PermissionTreeVO>}
+     */
+    Result<PermissionTreeVO> buildPermissionTreeByResourceAdmin();
+
 }

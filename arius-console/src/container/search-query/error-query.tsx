@@ -6,6 +6,7 @@ import { PERIOD_RADIO_MAP, errorQueryColumns } from "./config";
 import { getErrorQueryList as getQueryList } from "api/search-query";
 import { isSuperApp } from "lib/utils";
 import { ProTable } from "knowdesign";
+import { Drawer } from "antd";
 import "./index.less";
 
 const classPrefix = "error-query-container";
@@ -23,7 +24,8 @@ export const ErrorQuery = (props: any) => {
     size: 10,
   });
   const [total, setTotal] = useState(0);
-
+  const [visible, setVisible] = useState(false);
+  const [drawerData, setDrawerData] = useState();
   const isFirst = useRef(true);
   const totalLimit = 10000;
 
@@ -72,6 +74,15 @@ export const ErrorQuery = (props: any) => {
     getAsyncDataSource();
   }, [queryParams, page]);
 
+  const showDrawer = (record: any) => {
+    setDrawerData(record);
+    setVisible(true);
+  };
+
+  const onClose = () => {
+    setVisible(false);
+  };
+
   useEffect(() => {
     props?.menu === "error-query" && getAsyncDataSource();
   }, [props?.menu]);
@@ -79,7 +90,10 @@ export const ErrorQuery = (props: any) => {
   return (
     <div className={classPrefix}>
       <div className={`${classPrefix}-query`}>
-        <SearchQueryForm setSearchQuery={changeQueryParams} value={"error-query"} />
+        <SearchQueryForm
+          setSearchQuery={changeQueryParams}
+          value={"error-query"}
+        />
       </div>
 
       <div className={`${classPrefix}-table`}>
@@ -92,18 +106,28 @@ export const ErrorQuery = (props: any) => {
             loading: isLoading,
             rowKey: "key",
             dataSource: dataSource,
-            columns: errorQueryColumns(isSuperApp()),
+            columns: errorQueryColumns(isSuperApp(), showDrawer),
             paginationProps: {
               total: total > totalLimit ? totalLimit : total,
               current: page.page,
               pageSize: page.size,
               pageSizeOptions: ["10", "20", "50", "100", "200", "500"],
               showTotal: (total) => `共 ${total} 条`,
-              itemRender: (pagination, type: "page" | "prev" | "next", originalElement) => {
+              itemRender: (
+                pagination,
+                type: "page" | "prev" | "next",
+                originalElement
+              ) => {
                 const lastPage = totalLimit / page.size;
                 if (type === "page") {
                   if (total > totalLimit && pagination === lastPage) {
-                    return <Tooltip title={`考虑到性能问题，只展示${totalLimit}条数据`}>{pagination}</Tooltip>;
+                    return (
+                      <Tooltip
+                        title={`考虑到性能问题，只展示${totalLimit}条数据`}
+                      >
+                        {pagination}
+                      </Tooltip>
+                    );
                   } else {
                     return pagination;
                   }
@@ -119,6 +143,16 @@ export const ErrorQuery = (props: any) => {
           }}
         />
       </div>
+      <Drawer
+        title={"错误信息详情"}
+        width={600}
+        visible={visible}
+        maskClosable={true}
+        onClose={onClose}
+        bodyStyle={{ padding: "24pxs", background: "#f5f7fa" }}
+      >
+        <p>{drawerData}</p>
+      </Drawer>
     </div>
   );
 };

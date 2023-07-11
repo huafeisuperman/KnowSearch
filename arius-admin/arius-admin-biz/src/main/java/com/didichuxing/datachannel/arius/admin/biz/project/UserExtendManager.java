@@ -63,7 +63,7 @@ public interface UserExtendManager {
      * @return 用户详情
      * @throws KfSecurityException 用户不存在
      */
-    Result<UserWithPwVO> getUserDetailByUserId(Integer userId, Integer projectId) throws Exception;
+    Result<UserVO> getUserDetailByUserId(Integer userId, Integer projectId) throws Exception;
 
     /**
      * 根据用户id删除用户

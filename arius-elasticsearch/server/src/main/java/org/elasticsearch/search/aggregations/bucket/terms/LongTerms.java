@@ -43,7 +43,7 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
         long term;
 
         public Bucket(long term, long docCount, InternalAggregations aggregations, boolean showDocCountError, long docCountError,
-                DocValueFormat format) {
+                      DocValueFormat format) {
             super(docCount, aggregations, showDocCountError, docCountError, format);
             this.term = term;
         }
@@ -102,8 +102,8 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
     }
 
     public LongTerms(String name, BucketOrder order, int requiredSize, long minDocCount, List<PipelineAggregator> pipelineAggregators,
-            Map<String, Object> metaData, DocValueFormat format, int shardSize, boolean showTermDocCountError, long otherDocCount,
-            List<Bucket> buckets, long docCountError) {
+                     Map<String, Object> metaData, DocValueFormat format, int shardSize, boolean showTermDocCountError, long otherDocCount,
+                     List<Bucket> buckets, long docCountError) {
         super(name, order, requiredSize, minDocCount, pipelineAggregators, metaData, format, shardSize, showTermDocCountError,
                 otherDocCount, buckets, docCountError);
     }
@@ -154,7 +154,7 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
     }
 
     @Override
-    Bucket createBucket(long docCount, InternalAggregations aggs, long docCountError, LongTerms.Bucket prototype) {
+    public Bucket createBucket(long docCount, InternalAggregations aggs, long docCountError, LongTerms.Bucket prototype) {
         return new Bucket(prototype.term, docCount, aggs, prototype.showDocCountError, docCountError, format);
     }
 
@@ -166,13 +166,13 @@ public class LongTerms extends InternalMappedTerms<LongTerms, LongTerms.Bucket> 
         List<DoubleTerms.Bucket> newBuckets = new ArrayList<>();
         for (Terms.Bucket bucket : buckets) {
             newBuckets.add(new DoubleTerms.Bucket(bucket.getKeyAsNumber().doubleValue(),
-                bucket.getDocCount(), (InternalAggregations) bucket.getAggregations(), longTerms.showTermDocCountError,
-                longTerms.showTermDocCountError ? bucket.getDocCountError() : 0, decimalFormat));
+                    bucket.getDocCount(), (InternalAggregations) bucket.getAggregations(), longTerms.showTermDocCountError,
+                    longTerms.showTermDocCountError ? bucket.getDocCountError() : 0, decimalFormat));
         }
         return new DoubleTerms(longTerms.getName(), longTerms.order, longTerms.requiredSize,
-            longTerms.minDocCount, longTerms.pipelineAggregators(),
-            longTerms.metaData, longTerms.format, longTerms.shardSize,
-            longTerms.showTermDocCountError, longTerms.otherDocCount,
-            newBuckets, longTerms.docCountError);
+                longTerms.minDocCount, longTerms.pipelineAggregators(),
+                longTerms.metaData, longTerms.format, longTerms.shardSize,
+                longTerms.showTermDocCountError, longTerms.otherDocCount,
+                newBuckets, longTerms.docCountError);
     }
 }

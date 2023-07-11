@@ -48,7 +48,7 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
     protected static final ParseField SUM_OF_OTHER_DOC_COUNTS = new ParseField("sum_other_doc_count");
 
     public abstract static class Bucket<B extends Bucket<B>> extends InternalMultiBucketAggregation.InternalBucket
-        implements Terms.Bucket, KeyComparable<B> {
+            implements Terms.Bucket, KeyComparable<B> {
         /**
          * Reads a bucket. Should be a constructor reference.
          */
@@ -57,16 +57,16 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
             B read(StreamInput in, DocValueFormat format, boolean showDocCountError) throws IOException;
         }
 
-        long bucketOrd;
+        public long bucketOrd;
 
-        protected long docCount;
-        protected long docCountError;
-        protected InternalAggregations aggregations;
-        protected final boolean showDocCountError;
-        protected final DocValueFormat format;
+        public long docCount;
+        public long docCountError;
+        public InternalAggregations aggregations;
+        public final boolean showDocCountError;
+        public final DocValueFormat format;
 
-        protected Bucket(long docCount, InternalAggregations aggregations, boolean showDocCountError, long docCountError,
-                DocValueFormat formatter) {
+        public Bucket(long docCount, InternalAggregations aggregations, boolean showDocCountError, long docCountError,
+                      DocValueFormat formatter) {
             this.showDocCountError = showDocCountError;
             this.format = formatter;
             this.docCount = docCount;
@@ -77,7 +77,7 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
         /**
          * Read from a stream.
          */
-        protected Bucket(StreamInput in, DocValueFormat formatter, boolean showDocCountError) throws IOException {
+        public Bucket(StreamInput in, DocValueFormat formatter, boolean showDocCountError) throws IOException {
             this.showDocCountError = showDocCountError;
             this.format = formatter;
             docCount = in.readVLong();
@@ -153,12 +153,12 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
         }
     }
 
-    protected final BucketOrder order;
-    protected final int requiredSize;
-    protected final long minDocCount;
+    public final BucketOrder order;
+    public final int requiredSize;
+    public final long minDocCount;
 
-    protected InternalTerms(String name, BucketOrder order, int requiredSize, long minDocCount,
-            List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
+    public InternalTerms(String name, BucketOrder order, int requiredSize, long minDocCount,
+                         List<PipelineAggregator> pipelineAggregators, Map<String, Object> metaData) {
         super(name, pipelineAggregators, metaData);
         this.order = order;
         this.requiredSize = requiredSize;
@@ -169,10 +169,10 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
      * Read from a stream.
      */
     protected InternalTerms(StreamInput in) throws IOException {
-       super(in);
-       order = InternalOrder.Streams.readOrder(in);
-       requiredSize = readSize(in);
-       minDocCount = in.readVLong();
+        super(in);
+        order = InternalOrder.Streams.readOrder(in);
+        requiredSize = readSize(in);
+        minDocCount = in.readVLong();
     }
 
     @Override
@@ -325,7 +325,7 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
      */
     protected abstract B[] createBucketsArray(int size);
 
-    abstract B createBucket(long docCount, InternalAggregations aggs, long docCountError, B prototype);
+    public abstract B createBucket(long docCount, InternalAggregations aggs, long docCountError, B prototype);
 
     @Override
     public boolean equals(Object obj) {
@@ -345,7 +345,7 @@ public abstract class InternalTerms<A extends InternalTerms<A, B>, B extends Int
     }
 
     protected static XContentBuilder doXContentCommon(XContentBuilder builder, Params params,
-                                               long docCountError, long otherDocCount, List<? extends Bucket> buckets) throws IOException {
+                                                      long docCountError, long otherDocCount, List<? extends Bucket> buckets) throws IOException {
         builder.field(DOC_COUNT_ERROR_UPPER_BOUND_FIELD_NAME.getPreferredName(), docCountError);
         builder.field(SUM_OF_OTHER_DOC_COUNTS.getPreferredName(), otherDocCount);
         builder.startArray(CommonFields.BUCKETS.getPreferredName());

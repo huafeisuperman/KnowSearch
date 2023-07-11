@@ -15,18 +15,18 @@ public class InboundConnectionHandler extends SimpleChannelHandler {
 		
 		@Override
 		public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-				ConnectionLimitResult connectionLimit = inboundConnectionLimitService.nodeLimitResult();
+				/*ConnectionLimitResult connectionLimit = inboundConnectionLimitService.nodeLimitResult();
 				if (connectionLimit.isOverConnected()) {
 						inboundConnectionLimitService.addIgnore(e.getChannel());
 				} else {
 						inboundConnectionLimitService.onConnect(e.getChannel());
-				}
+				}*/
 				super.channelConnected(ctx, e);
 		}
 		
 		@Override
 		public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-				inboundConnectionLimitService.onDisconnect(e.getChannel());
+				//inboundConnectionLimitService.onDisconnect(e.getChannel());
 				super.channelDisconnected(ctx, e);
 		}
 }

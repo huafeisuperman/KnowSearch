@@ -62,7 +62,7 @@ public class LongValuesComparatorSource extends IndexFieldData.XFieldComparatorS
         return SortField.Type.LONG;
     }
 
-    private SortedNumericDocValues loadDocValues(LeafReaderContext context) {
+    public SortedNumericDocValues loadDocValues(LeafReaderContext context) {
         final AtomicNumericFieldData data = indexFieldData.load(context);
         SortedNumericDocValues values;
         if (data instanceof SortedNumericDVIndexFieldData.NanoSecondFieldData) {

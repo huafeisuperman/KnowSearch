@@ -76,6 +76,9 @@ public class GatewayJoinVO {
     @ApiModelProperty("错误名称")
     private String            exceptionName;
 
+    @ApiModelProperty("异常堆栈信息")
+    private String            stack;
+
     @ApiModelProperty("创建时间")
     private String            ariusCreateTime;
 

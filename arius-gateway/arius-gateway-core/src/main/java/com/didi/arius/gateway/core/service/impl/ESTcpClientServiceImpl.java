@@ -5,6 +5,8 @@ import static org.apache.commons.lang.StringUtils.*;
 import java.net.InetAddress;
 import java.util.*;
 
+import cn.hutool.core.util.ObjectUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
@@ -72,6 +74,12 @@ public class ESTcpClientServiceImpl implements ESTcpClientService {
             if (!esCluster.getReadAddress().equals( newESCluster.getReadAddress())) {
                 adds.add( newESCluster );
             }
+
+            //密码(包含账户名)变化的也要重新init连接
+            if (StringUtils.isNotEmpty(newESCluster.getPassword()) && !newESCluster.getPassword().equals(esCluster.getPassword())) {
+                adds.add(newESCluster);
+            }
+
         }
 
         // check add

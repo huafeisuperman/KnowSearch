@@ -452,11 +452,11 @@ public class ESUserManagerImpl implements ESUserManager {
             List<String> clusterPhyList = regions.stream().map(ClusterRegion::getPhyClusterName).distinct()
                     .collect(Collectors.toList());
           
-            // 如果存在 cluster 且没有匹配到具有权限的物理集群
-            if (StringUtils.isNotBlank(esUserDTO.getCluster()) && clusterPhyList.stream()
-                    .noneMatch(cp -> StringUtils.equals(cp, esUserDTO.getCluster()))) {
-                return Result.buildFail(String.format("应用没有 %s 集群的权限", esUserDTO.getCluster()));
+            // 如果存在逻辑cluster但是没有匹配到对应的物理集群
+            if (StringUtils.isNotBlank(esUserDTO.getCluster()) && CollectionUtils.isEmpty(clusterPhyList)) {
+                return Result.buildFail(String.format("逻辑集群%s没有找到对应的物理集群", esUserDTO.getCluster()));
             }
+
         }
         // 索引模式默认集群设置未 null
         if (searchTypeEnum.equals(ProjectSearchTypeEnum.TEMPLATE)) {

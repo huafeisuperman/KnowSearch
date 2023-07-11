@@ -83,12 +83,12 @@
       color: #303a51;
       background: #f5f7fa;
 
-      >div:first-child {
+      > div:first-child {
         width: 157px;
         border-top-left-radius: 4px;
       }
 
-      >div:last-child {
+      > div:last-child {
         // width: 482px;
         border-top-right-radius: 4px;
       }
@@ -98,7 +98,8 @@
       .col-permission {
         display: flex;
 
-        .permission-all {}
+        .permission-all {
+        }
 
         .permission-content {
           flex: 1;
@@ -152,5 +153,43 @@
 
   .ant-alert-icon {
     font-size: 17px;
+  }
+}
+
+.pswd-blk {
+  .reset-form-blk {
+    position: absolute;
+    top: 115px;
+    right: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 303px;
+    background-color: #ffffff;
+    background-clip: padding-box;
+    padding: 12px 22px;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08),
+      0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    z-index: 9;
+  }
+  .ant-form-item-explain-error {
+    width: 110%;
+  }
+  .reset-title {
+    display: flex;
+    justify-content: space-between;
+    .title {
+      font-size: 16px;
+    }
+    .reset-icon {
+      margin-top: -10px;
+      margin-right: -16px;
+      color: #666;
+      cursor: pointer;
+      &:hover {
+        color: #374053;
+      }
+    }
   }
 }

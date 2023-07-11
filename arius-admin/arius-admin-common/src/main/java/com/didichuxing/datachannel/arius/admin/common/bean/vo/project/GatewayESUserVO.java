@@ -28,6 +28,12 @@ public class GatewayESUserVO extends BaseVO {
     @ApiModelProperty("应用名称")
     private String       name;
 
+    @ApiModelProperty("es集群用户名")
+    private String       username;
+
+    @ApiModelProperty("es集群用户密码")
+    private String       password;
+
     @ApiModelProperty("验证码")
     private String       verifyCode;
 

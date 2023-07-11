@@ -280,9 +280,9 @@ class VersionPropertiesLoader {
       }
       elasticsearch += "-" + qualifier
     }
-    if ("true".equals(systemProperties.getProperty("build.snapshot", "true"))) {
+    /*if ("true".equals(systemProperties.getProperty("build.snapshot", "true"))) {
       elasticsearch += "-SNAPSHOT"
-    }
+    }*/
     loadedProps.put("elasticsearch", elasticsearch)
   }
 }

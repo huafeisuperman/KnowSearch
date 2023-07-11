@@ -191,18 +191,18 @@ public abstract class Engine implements Closeable {
             ObjectLongHashMap<String> completionFields = null;
             if (fieldNamePatterns != null && fieldNamePatterns.length > 0) {
                 completionFields = new ObjectLongHashMap<>(fieldNamePatterns.length);
-            }
-            for (LeafReaderContext atomicReaderContext : currentSearcher.getIndexReader().leaves()) {
-                LeafReader atomicReader = atomicReaderContext.reader();
-                for (FieldInfo info : atomicReader.getFieldInfos()) {
-                    Terms terms = atomicReader.terms(info.name);
-                    if (terms instanceof CompletionTerms) {
-                        // TODO: currently we load up the suggester for reporting its size
-                        long fstSize = ((CompletionTerms) terms).suggester().ramBytesUsed();
-                        if (Regex.simpleMatch(fieldNamePatterns, info.name)) {
-                            completionFields.addTo(info.name, fstSize);
+                for (LeafReaderContext atomicReaderContext : currentSearcher.getIndexReader().leaves()) {
+                    LeafReader atomicReader = atomicReaderContext.reader();
+                    for (FieldInfo info : atomicReader.getFieldInfos()) {
+                        Terms terms = atomicReader.terms(info.name);
+                        if (terms instanceof CompletionTerms) {
+                            // TODO: currently we load up the suggester for reporting its size
+                            long fstSize = ((CompletionTerms) terms).suggester().ramBytesUsed();
+                            if (Regex.simpleMatch(fieldNamePatterns, info.name)) {
+                                completionFields.addTo(info.name, fstSize);
+                            }
+                            sizeInBytes += fstSize;
                         }
-                        sizeInBytes += fstSize;
                     }
                 }
             }

@@ -215,7 +215,7 @@ public class ProjectExtendManagerImpl implements ProjectExtendManager {
                 .updateOrInitProjectConfig(config, operator);
         
             // 全量获取具有管理员角色的用户
-            final List<UserBriefVO> userBriefListWithAdminRole = userService.getUserBriefListByRoleId(AuthConstant.ADMIN_ROLE_ID);
+            final List<UserBriefVO> userBriefListWithAdminRole = userService.getUserBriefListByRoleType(AuthConstant.ADMIN_ROLE_TYPE);
             buildProjectExtendVO(projectExtendVO,userBriefListWithAdminRole);
             // 设置项目配置
             if (resultProjectConfigTuple.v1().success()) {
@@ -257,7 +257,7 @@ public class ProjectExtendManagerImpl implements ProjectExtendManager {
             ProjectExtendVO projectExtendVO = ConvertUtil.obj2Obj(projectVO, ProjectExtendVO.class);
             
             // 全量获取具有管理员角色的用户
-            final List<UserBriefVO> userBriefListWithAdminRole =userService.getUserBriefListByRoleId(AuthConstant.ADMIN_ROLE_ID);
+            final List<UserBriefVO> userBriefListWithAdminRole =userService.getUserBriefListByRoleType(AuthConstant.ADMIN_ROLE_TYPE);
             buildProjectExtendVO(projectExtendVO, userBriefListWithAdminRole);
             ProjectConfig projectConfig = projectConfigService.getProjectConfig(projectId);
             projectExtendVO.setConfig(ConvertUtil.obj2Obj(projectConfig, ProjectConfigVO.class));
@@ -419,7 +419,7 @@ public class ProjectExtendManagerImpl implements ProjectExtendManager {
             ProjectExtendVO.class);
         //全量获取具有管理员角色的用户
         final List<UserBriefVO> userBriefListWithAdminRole =
-                userService.getUserBriefListByRoleId(AuthConstant.ADMIN_ROLE_ID);
+                userService.getUserBriefListByRoleType(AuthConstant.ADMIN_ROLE_TYPE);
         for (ProjectExtendVO projectExtendVO : projectExtendVOList) {
             FUTURE_UTIL.runnableTask(() -> {
                 
@@ -665,7 +665,7 @@ public class ProjectExtendManagerImpl implements ProjectExtendManager {
             //如果为false则不包含管理员角色的用户
             if (Boolean.FALSE.equals(containsAdminRole)){
                 final List<Integer> userBriefListWithAdminRole =
-                userService.getUserBriefListByRoleId(AuthConstant.ADMIN_ROLE_ID)
+                        userService.getUserBriefListByRoleType(AuthConstant.ADMIN_ROLE_TYPE)
                         .stream()
                         .map(UserBriefVO::getId).distinct().collect(Collectors.toList());
                 final List<UserBriefVO> userBriefVOList = listResult.getData().stream()
@@ -772,8 +772,8 @@ public class ProjectExtendManagerImpl implements ProjectExtendManager {
         //超级项目侧校验添加的用户收否存在管理员角色
         if (operation.equals(OperationEnum.EDIT)) {
             if (AuthConstant.SUPER_PROJECT_ID.equals(projectId)) {
-                Predicate<List<RoleBriefVO>> checkContainsAdminRoleFunc = roleBriefList -> roleBriefList.stream()
-                    .anyMatch(roleBriefVO -> AuthConstant.ADMIN_ROLE_ID.equals(roleBriefVO.getId()));
+                Predicate<List<RoleBriefVO>> checkContainsAdminRoleFunc =
+                        roleBriefList -> roleTool.isAdminByRoleId(roleBriefList.stream().map(RoleBriefVO::getId).collect(Collectors.toList()));
                 /*当前用户列表中存在管理员*/
                 if (CollectionUtils.isNotEmpty(userIdList)&&userIdList.stream().map(roleService::getRoleBriefListByUserId)
                     .noneMatch(checkContainsAdminRoleFunc)) {
